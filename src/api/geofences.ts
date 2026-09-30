@@ -1,4 +1,4 @@
-import { fetchApi } from './apiClient';
+import { fetchApi } from '@/lib/api/client';
 
 export type GeofenceType = 'Circle' | 'Polygon' | 'RouteCorridor';
 export type GeofenceStatus = 'Active' | 'Draft' | 'Inactive' | 'Expired';
@@ -43,34 +43,29 @@ export interface RouteCheckpoint {
 }
 
 export const geofenceService = {
-  getGeofences: () => fetchApi<Geofence[]>('/v1/geofences'),
-  getGeofence: (id: string) => fetchApi<Geofence>(`/v1/geofences/${id}`),
-  createGeofence: (payload: Partial<Geofence>) => fetchApi<Geofence>('/v1/geofences', { method: 'POST', body: JSON.stringify(payload) }),
-  updateGeofence: (id: string, payload: Partial<Geofence>) => fetchApi<Geofence>(`/v1/geofences/${id}`, { method: 'PATCH', body: JSON.stringify(payload) }),
-  validateGeofence: (id: string, payload: { lat: number, lng: number }) => fetchApi<{ result: string, tolerance: number, timestamp: string }>(`/v1/geofences/${id}/validate`, { method: 'POST', body: JSON.stringify(payload) })
+  getGeofences: () => fetchApi<Geofence[]>('/api/v1/locations'),
+  getGeofence: (id: string) => fetchApi<Geofence>(`/api/v1/locations/${id}`),
+  createGeofence: (payload: Partial<Geofence>) => fetchApi<Geofence>('/api/v1/locations', { method: 'POST', body: JSON.stringify(payload) }),
+  updateGeofence: (id: string, payload: Partial<Geofence>) => fetchApi<Geofence>(`/api/v1/locations/${id}`, { method: 'PATCH', body: JSON.stringify(payload) }),
+  validateGeofence: (id: string, payload: { lat: number, lng: number }) => fetchApi<{ result: string, tolerance: number, timestamp: string }>(`/api/v1/locations/${id}/validate`, { method: 'POST', body: JSON.stringify(payload) })
 };
 
 export const gisService = {
-  getLayers: () => fetchApi<GISLayer[]>('/v1/gis/layers'),
+  getLayers: () => fetchApi<GISLayer[]>('/api/v1/gis/layers'),
   importGIS: (formData: FormData) => {
-    // mock implementation since standard fetchApi uses application/json
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({ status: 'Processing', jobId: 'job-123' });
-      }, 1000);
-    });
+    return fetchApi<any>('/api/v1/gis/import', { method: 'POST', body: formData });
   }
 };
 
 export const locationService = {
-  getMapConfig: (id: string) => fetchApi<any>(`/v1/locations/${id}/map-config`),
-  getLocationPolicy: () => fetchApi<LocationPolicy>('/v1/location-policy')
+  getMapConfig: (id: string) => fetchApi<any>(`/api/v1/locations/${id}/map-config`),
+  getLocationPolicy: () => fetchApi<LocationPolicy>('/api/v1/location-policy')
 };
 
 export const routeService = {
-  getRouteCheckpoints: (id: string) => fetchApi<RouteCheckpoint[]>(`/v1/routes/${id}/checkpoints`)
+  getRouteCheckpoints: (id: string) => fetchApi<RouteCheckpoint[]>(`/api/v1/routes/${id}/checkpoints`)
 };
 
 export const locationEventService = {
-  submitBatch: (payload: any) => fetchApi<any>('/v1/location-events/batch', { method: 'POST', body: JSON.stringify(payload) })
+  submitBatch: (payload: any) => fetchApi<any>('/api/v1/location-events/batch', { method: 'POST', body: JSON.stringify(payload) })
 };

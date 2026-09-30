@@ -14,9 +14,9 @@ export const SessionsView = ({ refreshKey }: { refreshKey: number }) => {
     let mounted = true;
     setLoading(true);
     getAttendanceSessions()
-      .then((res) => {
+      .then((res: any) => {
         if (!mounted) return;
-        setData(res.items);
+        setData(res?.items || (Array.isArray(res) ? res : []));
       })
       .catch(() => {
         if (mounted) setError(true);
@@ -79,7 +79,7 @@ export const SessionsView = ({ refreshKey }: { refreshKey: number }) => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {data.length === 0 ? (
+            {(!data || data.length === 0) ? (
               <tr>
                 <td colSpan={8} className="px-6 py-12 text-center text-sm text-gray-500">
                   No attendance sessions found.

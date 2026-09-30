@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import { Upload, Plus, Search } from "lucide-react";
 import { getEmployees, Employee } from "@/api/employees";
 import { EmployeeTable } from "@/components/employees/EmployeeTable";
+import { AddEmployeeModal } from "@/components/employees/AddEmployeeModal";
+import { Tabs } from "@/components/ui/Tabs";
 import clsx from "clsx";
 
 const categories = [
@@ -19,6 +21,7 @@ export default function EmployeesPage() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   
   // Data State
   const [data, setData] = useState<Employee[]>([]);
@@ -55,20 +58,23 @@ export default function EmployeesPage() {
   }, [activeCategory, debouncedSearch, page]);
 
   return (
-    <div className="flex flex-col h-full bg-gray-50 min-h-screen">
+    <div className="flex flex-col h-full bg-transparent min-h-screen">
       {/* Header */}
-      <div className="bg-white border-b px-6 py-4 flex flex-col gap-4 shadow-sm">
+      <div className="bg-white border-b border-gray-200 px-8 py-6 flex flex-col gap-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)] sticky top-0 z-10">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900">Employees</h1>
-            <p className="text-sm text-gray-500 mt-1">Manage employees, assignments, supervisors, verification policies and workforce status.</p>
+            <h1 className="text-[26px] leading-tight font-black text-gray-900 tracking-tight">Employees</h1>
+            <p className="text-[14px] text-gray-500 mt-1">Manage employees, assignments, supervisors, verification policies and workforce status.</p>
           </div>
           <div className="flex items-center gap-3">
-            <button className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-sm">
+            <button className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-[13px] font-semibold text-gray-700 bg-white hover:bg-blue-50/50 hover:text-blue-700 hover:border-blue-300 shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 active:scale-95">
               <Upload className="w-4 h-4" />
               Import
             </button>
-            <button className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm">
+            <button 
+              onClick={() => setIsAddModalOpen(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-[13px] font-semibold hover:bg-blue-700 shadow-sm hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 active:scale-95"
+            >
               <Plus className="w-4 h-4" />
               Add Employee
             </button>
@@ -76,49 +82,40 @@ export default function EmployeesPage() {
         </div>
 
         {/* Toolbar */}
-        <div className="flex flex-wrap items-center gap-4 pt-2">
-          <div className="relative w-full max-w-md">
-            <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="relative w-full max-w-md group">
+            <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 group-focus-within:text-blue-500 transition-colors" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search employees..."
-              className="w-full pl-9 pr-4 py-2 bg-gray-50 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors"
+              className="w-full pl-9 pr-4 py-2 bg-gray-50/50 border border-gray-200 rounded-lg text-[13px] text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white transition-all shadow-sm"
             />
           </div>
-          {/* Mock filters for demonstration of structure */}
-          <select className="border border-gray-300 text-gray-700 rounded-md text-sm px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <select className="border border-gray-200 text-gray-700 rounded-lg text-[13px] font-medium px-3 py-2 bg-white hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm cursor-pointer">
             <option value="">Department</option>
           </select>
-          <select className="border border-gray-300 text-gray-700 rounded-md text-sm px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <select className="border border-gray-200 text-gray-700 rounded-lg text-[13px] font-medium px-3 py-2 bg-white hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm cursor-pointer">
             <option value="">Unit</option>
           </select>
-          <select className="border border-gray-300 text-gray-700 rounded-md text-sm px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <select className="border border-gray-200 text-gray-700 rounded-lg text-[13px] font-medium px-3 py-2 bg-white hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm cursor-pointer">
             <option value="">Status</option>
           </select>
         </div>
 
         {/* Category Navigation */}
-        <nav className="flex space-x-6 overflow-x-auto border-b border-gray-200 mt-2" aria-label="Tabs">
-          {categories.map((category) => (
-            <button
-              key={category.id}
-              onClick={() => {
-                setActiveCategory(category.id);
-                setPage(1); // Reset page on category change
-              }}
-              className={clsx(
-                "whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm transition-colors",
-                activeCategory === category.id
-                  ? "border-blue-500 text-blue-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-              )}
-            >
-              {category.label}
-            </button>
-          ))}
-        </nav>
+        <div className="mt-2">
+          <Tabs
+            tabs={categories}
+            activeId={activeCategory}
+            onChange={(id) => {
+              setActiveCategory(id);
+              setPage(1);
+            }}
+            tabClassName="px-1"
+          />
+        </div>
       </div>
 
       {/* Main Content */}
@@ -153,6 +150,18 @@ export default function EmployeesPage() {
           )}
         </div>
       </div>
+      
+      {isAddModalOpen && (
+        <AddEmployeeModal 
+          onClose={() => setIsAddModalOpen(false)} 
+          onSuccess={() => {
+            setIsAddModalOpen(false);
+            setPage(1); // Refresh data
+            // To truly refresh we can trigger a refreshKey or just reload
+            window.location.reload(); 
+          }} 
+        />
+      )}
     </div>
   );
 }

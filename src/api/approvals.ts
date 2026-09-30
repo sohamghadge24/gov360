@@ -1,4 +1,4 @@
-import { fetchApi } from './apiClient';
+import { fetchApi } from '@/lib/api/client';
 
 export type ExceptionStatus = 'Pending' | 'Under Review' | 'Approved' | 'Rejected' | 'Escalated' | 'Reopened';
 export type ExceptionSeverity = 'Critical' | 'High' | 'Medium' | 'Low';
@@ -74,41 +74,41 @@ export interface EscalationRule {
 }
 
 export const approvalsService = {
-  getPending: () => fetchApi<PendingApproval[]>('/v1/approvals/pending')
+  getPending: () => fetchApi<PendingApproval[]>('/api/v1/approvals/pending')
 };
 
 export const exceptionService = {
   getExceptions: (filters?: any) => {
     const query = filters ? new URLSearchParams(filters).toString() : '';
-    return fetchApi<ExceptionDetail[]>(`/v1/exceptions${query ? `?${query}` : ''}`);
+    return fetchApi<ExceptionDetail[]>(`/api/v1/exceptions${query ? `?${query}` : ''}`);
   },
-  getException: (id: string) => fetchApi<ExceptionDetail>(`/v1/exceptions/${id}`),
-  addExplanation: (id: string, payload: { text: string, attachment?: File }) => fetchApi<any>(`/v1/exceptions/${id}/explanation`, {
-    method: 'POST',
-    body: JSON.stringify(payload) // Assuming JSON for text, multipart would require FormData
-  }),
-  approve: (id: string, payload: { reason: string, effectiveOutcome?: string }) => fetchApi<any>(`/v1/exceptions/${id}/approve`, {
+  getException: (id: string) => fetchApi<ExceptionDetail>(`/api/v1/exceptions/${id}`),
+  addExplanation: (id: string, payload: { text: string, attachment?: File }) => fetchApi<any>(`/api/v1/exceptions/${id}/explanation`, {
     method: 'POST',
     body: JSON.stringify(payload)
   }),
-  reject: (id: string, payload: { reason: string }) => fetchApi<any>(`/v1/exceptions/${id}/reject`, {
+  approve: (id: string, payload: { reason: string, effectiveOutcome?: string }) => fetchApi<any>(`/api/v1/exceptions/${id}/approve`, {
     method: 'POST',
     body: JSON.stringify(payload)
   }),
-  escalate: (id: string) => fetchApi<any>(`/v1/exceptions/${id}/escalate`, { method: 'POST' }),
-  reopen: (id: string, payload: { reason: string }) => fetchApi<any>(`/v1/exceptions/${id}/reopen`, {
+  reject: (id: string, payload: { reason: string }) => fetchApi<any>(`/api/v1/exceptions/${id}/reject`, {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  }),
+  escalate: (id: string) => fetchApi<any>(`/api/v1/exceptions/${id}/escalate`, { method: 'POST' }),
+  reopen: (id: string, payload: { reason: string }) => fetchApi<any>(`/api/v1/exceptions/${id}/reopen`, {
     method: 'POST',
     body: JSON.stringify(payload)
   })
 };
 
 export const exceptionReasonService = {
-  getReasons: () => fetchApi<ExceptionReason[]>('/v1/exception-reasons')
+  getReasons: () => fetchApi<ExceptionReason[]>('/api/v1/exception-reasons')
 };
 
 export const escalationService = {
-  getRules: () => fetchApi<EscalationRule[]>('/v1/escalation-rules'),
-  createRule: (payload: Partial<EscalationRule>) => fetchApi<EscalationRule>('/v1/escalation-rules', {
+  getRules: () => fetchApi<EscalationRule[]>('/api/v1/escalation-rules'),
+  createRule: (payload: Partial<EscalationRule>) => fetchApi<EscalationRule>('/api/v1/escalation-rules', {
     method: 'POST',
     body: JSON.stringify(payload)
   })

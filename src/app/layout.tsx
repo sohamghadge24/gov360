@@ -23,13 +23,13 @@ export default function RootLayout({
       <body className={`${inter.className} bg-[var(--color-bg-app)] text-[var(--color-text-main)] overflow-hidden h-screen flex`}>
         <AuthProvider>
           <ToastProvider>
-          <Sidebar />
-          <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-            <Header />
-            <main className="flex-1 overflow-y-auto p-6 relative">
-              {children}
-            </main>
-          </div>
+            <Sidebar />
+            <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+              <Header />
+              <main className="flex-1 overflow-y-auto p-6 relative animate-page">
+                {children}
+              </main>
+            </div>
           </ToastProvider>
         </AuthProvider>
       </body>

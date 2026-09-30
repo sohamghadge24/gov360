@@ -1,4 +1,4 @@
-import { fetchApi } from './apiClient';
+import { fetchApi } from '@/lib/api/client';
 
 export interface Notification {
   id: string;
@@ -41,27 +41,27 @@ export interface NotificationDelivery {
 
 export const notificationService = {
   getNotifications: (cursor?: string) => 
-    fetchApi<{ data: Notification[], nextCursor?: string }>(`/v1/notifications${cursor ? `?cursor=${cursor}` : ''}`),
+    fetchApi<{ data: Notification[], nextCursor?: string }>(`/api/v1/notifications${cursor ? `?cursor=${cursor}` : ''}`),
   
   markAsRead: (id: string) => 
-    fetchApi<any>(`/v1/notifications/${id}/read`, { method: 'POST' }),
+    fetchApi<any>(`/api/v1/notifications/${id}/read`, { method: 'POST' }),
   
-  getTemplates: () => fetchApi<NotificationTemplate[]>('/v1/notification-templates'),
+  getTemplates: () => fetchApi<NotificationTemplate[]>('/api/v1/notifications/templates'),
   createTemplate: (payload: Partial<NotificationTemplate>) => 
-    fetchApi<NotificationTemplate>('/v1/notification-templates', { method: 'POST', body: JSON.stringify(payload) }),
+    fetchApi<NotificationTemplate>('/api/v1/notifications/templates', { method: 'POST', body: JSON.stringify(payload) }),
     
-  getRules: () => fetchApi<NotificationRule[]>('/v1/notification-rules'),
+  getRules: () => fetchApi<NotificationRule[]>('/api/v1/notifications/rules'),
   createRule: (payload: Partial<NotificationRule>) => 
-    fetchApi<NotificationRule>('/v1/notification-rules', { method: 'POST', body: JSON.stringify(payload) }),
+    fetchApi<NotificationRule>('/api/v1/notifications/rules', { method: 'POST', body: JSON.stringify(payload) }),
     
   broadcast: (payload: any) => 
-    fetchApi<any>('/v1/notifications/broadcast', { method: 'POST', body: JSON.stringify(payload) }),
+    fetchApi<any>('/api/v1/notifications/broadcast', { method: 'POST', body: JSON.stringify(payload) }),
     
-  getDeliveries: () => fetchApi<NotificationDelivery[]>('/v1/notification-deliveries'),
+  getDeliveries: () => fetchApi<NotificationDelivery[]>('/api/v1/notifications/deliveries'),
   
   registerPushToken: (payload: { token: string }) => 
-    fetchApi<any>('/v1/push/register-token', { method: 'POST', body: JSON.stringify(payload) }),
+    fetchApi<any>('/api/v1/push/register-token', { method: 'POST', body: JSON.stringify(payload) }),
   
   removePushToken: () => 
-    fetchApi<any>('/v1/push/register-token', { method: 'DELETE' })
+    fetchApi<any>('/api/v1/push/register-token', { method: 'DELETE' })
 };

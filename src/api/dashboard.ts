@@ -1,4 +1,4 @@
-import { fetchApi } from './apiClient';
+import { fetchApi } from '@/lib/api/client';
 
 export interface DashboardSummary {
   scheduled: number | null;
@@ -12,5 +12,5 @@ export interface DashboardSummary {
 }
 
 export const getDashboardSummary = async (): Promise<DashboardSummary | null> => {
-  return fetchApi<DashboardSummary>('/dashboard/summary');
+  return fetchApi<DashboardSummary>('/api/v1/monitoring/summary');
 };

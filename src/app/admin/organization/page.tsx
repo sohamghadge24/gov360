@@ -10,7 +10,7 @@ export default function OrganizationLocationMaster() {
   const [selectedNode, setSelectedNode] = useState<any>(null);
 
   return (
-    <div className="flex flex-col h-full bg-gray-50 min-h-screen">
+    <div className="flex flex-col h-full bg-transparent min-h-screen">
       {/* Header */}
       <div className="bg-white border-b px-6 py-4 flex items-center justify-between shadow-sm">
         <div>

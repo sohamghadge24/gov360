@@ -1,15 +1,15 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { 
-  Users, Map, Clock, AlertTriangle, Search, ChevronDown, CheckCircle, 
+import {
+  Users, Map, Clock, AlertTriangle, Search, ChevronDown, CheckCircle,
   MapPin, X, Loader2, Navigation, Maximize2, ShieldAlert, FileText, WifiOff, RefreshCw
 } from "lucide-react";
-import { 
-  monitoringService, 
-  MonitoringSummary, 
-  MonitoringEmployeeStatus, 
-  DueVerification, 
+import {
+  monitoringService,
+  MonitoringSummary,
+  MonitoringEmployeeStatus,
+  DueVerification,
   OperationalException,
   MonitoringMapPoint,
   TimelineEvent,
@@ -20,17 +20,17 @@ export const ControlRoomWorkspace = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [forbidden, setForbidden] = useState(false);
-  
+
   const [summary, setSummary] = useState<MonitoringSummary | null>(null);
   const [statusList, setStatusList] = useState<MonitoringEmployeeStatus[]>([]);
   const [mapPoints, setMapPoints] = useState<MonitoringMapPoint[]>([]);
   const [dueList, setDueList] = useState<DueVerification[]>([]);
   const [exceptions, setExceptions] = useState<OperationalException[]>([]);
   const [fieldCoverage, setFieldCoverage] = useState<FieldCoverage[]>([]);
-  
+
   const [connectionState, setConnectionState] = useState<'LIVE' | 'CONNECTING' | 'RECONNECTING' | 'OFFLINE'>('CONNECTING');
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
-  
+
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(null);
   const [timeline, setTimeline] = useState<TimelineEvent[]>([]);
   const [isTimelineLoading, setIsTimelineLoading] = useState(false);
@@ -53,7 +53,7 @@ export const ControlRoomWorkspace = () => {
     setLoading(true);
     setError(null);
     setConnectionState('CONNECTING');
-    
+
     try {
       const [
         sumData, statData, mapData, dueData, excData, covData
@@ -65,14 +65,14 @@ export const ControlRoomWorkspace = () => {
         monitoringService.getExceptions().catch(() => []),
         monitoringService.getFieldCoverage().catch(() => [])
       ]);
-      
+
       setSummary(sumData);
-      setStatusList(statData || []);
-      setMapPoints(mapData || []);
-      setDueList(dueData || []);
-      setExceptions(excData || []);
-      setFieldCoverage(covData || []);
-      
+      setStatusList(Array.isArray(statData) ? statData : (statData as any)?.items || []);
+      setMapPoints(Array.isArray(mapData) ? mapData : (mapData as any)?.items || []);
+      setDueList(Array.isArray(dueData) ? dueData : (dueData as any)?.items || []);
+      setExceptions(Array.isArray(excData) ? excData : (excData as any)?.items || []);
+      setFieldCoverage(Array.isArray(covData) ? covData : (covData as any)?.items || []);
+
       setLastUpdated(new Date());
       setConnectionState('LIVE');
     } catch (err: any) {
@@ -96,7 +96,7 @@ export const ControlRoomWorkspace = () => {
       setIsTimelineLoading(false);
     }
   };
-  
+
   const handleRefresh = () => {
     fetchInitialData();
   };
@@ -136,7 +136,7 @@ export const ControlRoomWorkspace = () => {
           <h1 className="text-xl font-bold text-gray-900">Live Control Room</h1>
           <p className="text-[13px] text-gray-500">Real-time workforce, verification and field-duty monitoring.</p>
         </div>
-        
+
         <div className="flex items-center gap-4">
           <div className="hidden md:flex items-center gap-3">
             <button className="px-3 py-1.5 border border-gray-200 rounded text-sm font-medium text-gray-700 bg-gray-50 flex items-center gap-1.5">
@@ -151,28 +151,26 @@ export const ControlRoomWorkspace = () => {
               />
             </div>
           </div>
-          
+
           <button onClick={handleRefresh} className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors" title="Refresh">
             <RefreshCw className="w-4 h-4" />
           </button>
-          
-          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider ${
-            connectionState === 'LIVE' ? 'bg-green-50 text-green-700 border border-green-100' :
-            connectionState === 'CONNECTING' ? 'bg-blue-50 text-blue-700 border border-blue-100' :
-            connectionState === 'RECONNECTING' ? 'bg-amber-50 text-amber-700 border border-amber-100' :
-            'bg-gray-100 text-gray-600 border border-gray-200'
-          }`}>
-             <span className={`w-2 h-2 rounded-full ${
-               connectionState === 'LIVE' ? 'bg-green-500 animate-pulse' :
-               connectionState === 'CONNECTING' ? 'bg-blue-500 animate-bounce' :
-               connectionState === 'RECONNECTING' ? 'bg-amber-500 animate-pulse' :
-               'bg-gray-400'
-             }`}></span>
-             {connectionState}
+
+          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider ${connectionState === 'LIVE' ? 'bg-green-50 text-green-700 border border-green-100' :
+              connectionState === 'CONNECTING' ? 'bg-blue-50 text-blue-700 border border-blue-100' :
+                connectionState === 'RECONNECTING' ? 'bg-amber-50 text-amber-700 border border-amber-100' :
+                  'bg-gray-100 text-gray-600 border border-gray-200'
+            }`}>
+            <span className={`w-2 h-2 rounded-full ${connectionState === 'LIVE' ? 'bg-green-500 animate-pulse' :
+                connectionState === 'CONNECTING' ? 'bg-blue-500 animate-bounce' :
+                  connectionState === 'RECONNECTING' ? 'bg-amber-500 animate-pulse' :
+                    'bg-gray-400'
+              }`}></span>
+            {connectionState}
           </div>
         </div>
       </div>
-      
+
       {connectionState === 'OFFLINE' && (
         <div className="bg-gray-800 text-white text-xs font-medium py-1.5 px-6 flex justify-between items-center shrink-0">
           <div className="flex items-center gap-2">
@@ -219,7 +217,7 @@ export const ControlRoomWorkspace = () => {
 
         {/* Main 3-column layout */}
         <div className="flex-1 flex gap-4 overflow-hidden">
-          
+
           {/* Left Panel: Employee Status */}
           {!isMapExpanded && (
             <div className="w-[30%] min-w-[320px] bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col overflow-hidden">
@@ -244,19 +242,18 @@ export const ControlRoomWorkspace = () => {
                 ) : (
                   <div className="divide-y divide-gray-100">
                     {statusList.map(emp => (
-                      <div 
-                        key={emp.employeeId} 
+                      <div
+                        key={emp.employeeId}
                         onClick={() => setSelectedEmployeeId(emp.employeeId)}
                         className={`p-3 hover:bg-gray-50 cursor-pointer transition-colors ${selectedEmployeeId === emp.employeeId ? 'bg-blue-50' : ''}`}
                       >
                         <div className="flex items-start gap-3">
-                          <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${
-                            emp.status === 'Missed' ? 'bg-red-500' :
-                            emp.status === 'Outside Zone' ? 'bg-orange-500' :
-                            emp.status === 'Verification Due' ? 'bg-amber-500' :
-                            emp.status === 'Verified' ? 'bg-green-500' :
-                            'bg-gray-400'
-                          }`} />
+                          <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${emp.status === 'Missed' ? 'bg-red-500' :
+                              emp.status === 'Outside Zone' ? 'bg-orange-500' :
+                                emp.status === 'Verification Due' ? 'bg-amber-500' :
+                                  emp.status === 'Verified' ? 'bg-green-500' :
+                                    'bg-gray-400'
+                            }`} />
                           <div className="flex-1 min-w-0">
                             <div className="flex justify-between items-start mb-0.5">
                               <span className="text-sm font-bold text-gray-900 truncate">{emp.name}</span>
@@ -264,13 +261,12 @@ export const ControlRoomWorkspace = () => {
                             </div>
                             <div className="text-[12px] text-gray-600 mb-1">{emp.duty} · {emp.location}</div>
                             <div className="flex items-center justify-between text-[11px]">
-                              <span className={`font-semibold ${
-                                emp.status === 'Missed' ? 'text-red-600' :
-                                emp.status === 'Outside Zone' ? 'text-orange-600' :
-                                emp.status === 'Verification Due' ? 'text-amber-600' :
-                                emp.status === 'Verified' ? 'text-green-600' :
-                                'text-gray-500'
-                              }`}>{emp.status}</span>
+                              <span className={`font-semibold ${emp.status === 'Missed' ? 'text-red-600' :
+                                  emp.status === 'Outside Zone' ? 'text-orange-600' :
+                                    emp.status === 'Verification Due' ? 'text-amber-600' :
+                                      emp.status === 'Verified' ? 'text-green-600' :
+                                        'text-gray-500'
+                                }`}>{emp.status}</span>
                               <span className="text-gray-400">{emp.lastVerifiedTime ? `Verified ${emp.lastVerifiedTime}` : 'No verification'}</span>
                             </div>
                           </div>
@@ -290,9 +286,9 @@ export const ControlRoomWorkspace = () => {
               <button className="bg-white/90 backdrop-blur shadow-sm border border-gray-200 rounded-md px-3 py-1.5 text-xs font-bold text-gray-700 hover:bg-white">Wards</button>
               <button className="bg-white/90 backdrop-blur shadow-sm border border-gray-200 rounded-md px-3 py-1.5 text-xs font-bold text-gray-700 hover:bg-white">Zones</button>
             </div>
-            
+
             <div className="absolute top-4 right-4 z-10">
-              <button 
+              <button
                 onClick={() => setIsMapExpanded(!isMapExpanded)}
                 className="bg-white/90 backdrop-blur shadow-sm border border-gray-200 rounded-md p-2 text-gray-700 hover:bg-white"
                 title={isMapExpanded ? "Exit Map Mode" : "Expand Map"}
@@ -300,42 +296,42 @@ export const ControlRoomWorkspace = () => {
                 <Maximize2 className="w-4 h-4" />
               </button>
             </div>
-            
+
             {/* Map Placeholder */}
             <div className="flex-1 bg-[#E8F0F6] flex flex-col items-center justify-center relative">
               {/* Fake pins for illustration */}
               <div className="absolute top-[40%] left-[30%] flex flex-col items-center group cursor-pointer">
-                 <div className="bg-green-500 w-4 h-4 rounded-full border-2 border-white shadow-md"></div>
-                 <div className="opacity-0 group-hover:opacity-100 absolute bottom-full mb-2 bg-white rounded shadow-lg border border-gray-200 p-2 text-xs w-32 pointer-events-none transition-opacity z-20">
-                   <div className="font-bold">Rahul Patil</div>
-                   <div className="text-gray-500">Field Duty</div>
-                   <div className="text-green-600 font-medium">Verified 10:42 AM</div>
-                 </div>
+                <div className="bg-green-500 w-4 h-4 rounded-full border-2 border-white shadow-md"></div>
+                <div className="opacity-0 group-hover:opacity-100 absolute bottom-full mb-2 bg-white rounded shadow-lg border border-gray-200 p-2 text-xs w-32 pointer-events-none transition-opacity z-20">
+                  <div className="font-bold">Rahul Patil</div>
+                  <div className="text-gray-500">Field Duty</div>
+                  <div className="text-green-600 font-medium">Verified 10:42 AM</div>
+                </div>
               </div>
-              
+
               <div className="absolute top-[60%] left-[55%] flex flex-col items-center group cursor-pointer">
-                 <div className="bg-red-500 w-4 h-4 rounded-full border-2 border-white shadow-md animate-pulse"></div>
-                 <div className="opacity-0 group-hover:opacity-100 absolute bottom-full mb-2 bg-white rounded shadow-lg border border-gray-200 p-2 text-xs w-32 pointer-events-none transition-opacity z-20">
-                   <div className="font-bold">Amit Sharma</div>
-                   <div className="text-gray-500">Beat 04</div>
-                   <div className="text-red-600 font-medium">Missed Verification</div>
-                 </div>
+                <div className="bg-red-500 w-4 h-4 rounded-full border-2 border-white shadow-md animate-pulse"></div>
+                <div className="opacity-0 group-hover:opacity-100 absolute bottom-full mb-2 bg-white rounded shadow-lg border border-gray-200 p-2 text-xs w-32 pointer-events-none transition-opacity z-20">
+                  <div className="font-bold">Amit Sharma</div>
+                  <div className="text-gray-500">Beat 04</div>
+                  <div className="text-red-600 font-medium">Missed Verification</div>
+                </div>
               </div>
 
               {!loading && (
                 <div className="absolute bottom-4 left-4 right-4 z-10">
-                   <div className="bg-white/90 backdrop-blur border border-gray-200 rounded-lg p-3 shadow-sm flex gap-4 overflow-x-auto text-xs">
-                     <div className="font-bold text-gray-700 flex items-center shrink-0 border-r border-gray-200 pr-4">FIELD COVERAGE</div>
-                     {fieldCoverage.map(cov => (
-                       <div key={cov.ward} className="flex items-center gap-2 shrink-0">
-                         <span className="text-gray-600 font-medium">{cov.ward}</span>
-                         <div className="w-20 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                           <div className={`h-full ${cov.percentage > 90 ? 'bg-green-500' : cov.percentage > 70 ? 'bg-amber-500' : 'bg-red-500'}`} style={{width: `${cov.percentage}%`}}></div>
-                         </div>
-                         <span className="font-bold text-gray-900">{cov.percentage}%</span>
-                       </div>
-                     ))}
-                   </div>
+                  <div className="bg-white/90 backdrop-blur border border-gray-200 rounded-lg p-3 shadow-sm flex gap-4 overflow-x-auto text-xs">
+                    <div className="font-bold text-gray-700 flex items-center shrink-0 border-r border-gray-200 pr-4">FIELD COVERAGE</div>
+                    {fieldCoverage.map(cov => (
+                      <div key={cov.ward} className="flex items-center gap-2 shrink-0">
+                        <span className="text-gray-600 font-medium">{cov.ward}</span>
+                        <div className="w-20 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                          <div className={`h-full ${cov.percentage > 90 ? 'bg-green-500' : cov.percentage > 70 ? 'bg-amber-500' : 'bg-red-500'}`} style={{ width: `${cov.percentage}%` }}></div>
+                        </div>
+                        <span className="font-bold text-gray-900">{cov.percentage}%</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
@@ -344,7 +340,7 @@ export const ControlRoomWorkspace = () => {
           {/* Right Panel: Alert Queue */}
           {!isMapExpanded && (
             <div className="w-[25%] min-w-[280px] bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col overflow-hidden">
-               <div className="px-4 py-3 border-b border-gray-100 bg-gray-50 flex items-center justify-between shrink-0">
+              <div className="px-4 py-3 border-b border-gray-100 bg-gray-50 flex items-center justify-between shrink-0">
                 <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Operational Queue</h2>
               </div>
               <div className="flex border-b border-gray-100 shrink-0">
@@ -353,7 +349,7 @@ export const ControlRoomWorkspace = () => {
                 <button className="flex-1 py-2 text-xs font-bold text-gray-500 border-b-2 border-transparent">Missed</button>
                 <button className="flex-1 py-2 text-xs font-bold text-gray-500 border-b-2 border-transparent">Exceptions</button>
               </div>
-              
+
               <div className="flex-1 overflow-y-auto p-3 space-y-3 bg-gray-50/30">
                 {loading ? (
                   <div className="flex justify-center p-4"><Loader2 className="w-5 h-5 text-gray-400 animate-spin" /></div>
@@ -381,7 +377,7 @@ export const ControlRoomWorkspace = () => {
                         </div>
                       </div>
                     ))}
-                    
+
                     {dueList.map(due => (
                       <div key={due.employeeId} className="bg-white border border-amber-200 rounded-md p-3 shadow-sm relative overflow-hidden">
                         <div className="absolute left-0 top-0 bottom-0 w-1 bg-amber-500"></div>
@@ -402,45 +398,43 @@ export const ControlRoomWorkspace = () => {
           )}
         </div>
       </div>
-      
+
       {/* Employee Drawer */}
       {selectedEmployeeId && selectedEmployeeStatus && (
         <div className="fixed inset-0 z-50 flex items-center justify-end bg-gray-900/60 backdrop-blur-sm">
           <div className="bg-white shadow-2xl w-full md:max-w-[420px] h-full flex flex-col animate-in slide-in-from-right duration-200">
-            
+
             <div className="p-5 border-b border-gray-200 flex justify-between items-start bg-white shrink-0">
               <div>
                 <h2 className="text-[18px] font-bold text-gray-900 leading-tight">{selectedEmployeeStatus.name}</h2>
                 <div className="text-xs font-mono text-gray-500 mb-2">{selectedEmployeeStatus.employeeId}</div>
-                <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                  selectedEmployeeStatus.status === 'Verified' ? 'bg-green-50 text-green-700' :
-                  selectedEmployeeStatus.status === 'Missed' ? 'bg-red-50 text-red-700' :
-                  selectedEmployeeStatus.status === 'Verification Due' ? 'bg-amber-50 text-amber-700' :
-                  'bg-gray-100 text-gray-700'
-                }`}>
-                  <span className={`w-1.5 h-1.5 rounded-full ${
-                    selectedEmployeeStatus.status === 'Verified' ? 'bg-green-500' :
-                    selectedEmployeeStatus.status === 'Missed' ? 'bg-red-500' :
-                    selectedEmployeeStatus.status === 'Verification Due' ? 'bg-amber-500' :
-                    'bg-gray-500'
-                  }`}></span>
+                <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${selectedEmployeeStatus.status === 'Verified' ? 'bg-green-50 text-green-700' :
+                    selectedEmployeeStatus.status === 'Missed' ? 'bg-red-50 text-red-700' :
+                      selectedEmployeeStatus.status === 'Verification Due' ? 'bg-amber-50 text-amber-700' :
+                        'bg-gray-100 text-gray-700'
+                  }`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${selectedEmployeeStatus.status === 'Verified' ? 'bg-green-500' :
+                      selectedEmployeeStatus.status === 'Missed' ? 'bg-red-500' :
+                        selectedEmployeeStatus.status === 'Verification Due' ? 'bg-amber-500' :
+                          'bg-gray-500'
+                    }`}></span>
                   {selectedEmployeeStatus.status}
                 </span>
               </div>
               <button onClick={() => setSelectedEmployeeId(null)} className="text-gray-400 hover:text-gray-700 p-1 rounded-md hover:bg-gray-100">
-                <X className="w-5 h-5"/>
+                <X className="w-5 h-5" />
               </button>
             </div>
-            
+
             <div className="flex-1 overflow-y-auto p-5 space-y-6 bg-gray-50/50">
-              
+
               <div className="space-y-3">
                 <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Current Duty</h3>
                 <div className="text-sm text-gray-900 font-medium">
                   {selectedEmployeeStatus.duty} · {selectedEmployeeStatus.location}
                 </div>
               </div>
-              
+
               <div className="space-y-3">
                 <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Last Verification</h3>
                 <div className="bg-white border border-gray-200 rounded-lg p-3">
@@ -451,7 +445,7 @@ export const ControlRoomWorkspace = () => {
                   )}
                 </div>
               </div>
-              
+
               <div className="space-y-3">
                 <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Location</h3>
                 <div className="bg-white border border-gray-200 rounded-lg p-3 flex items-start gap-3">
@@ -462,7 +456,7 @@ export const ControlRoomWorkspace = () => {
                   </div>
                 </div>
               </div>
-              
+
               <div className="space-y-3">
                 <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Timeline</h3>
                 <div className="bg-white border border-gray-200 rounded-lg p-4">
@@ -474,12 +468,11 @@ export const ControlRoomWorkspace = () => {
                     <div className="relative border-l border-gray-200 ml-2 space-y-4">
                       {timeline.map((ev, i) => (
                         <div key={ev.id} className="relative pl-4">
-                          <div className={`absolute -left-[5px] top-1 w-2.5 h-2.5 rounded-full border border-white ${
-                            ev.result === 'Passed' ? 'bg-green-500' : 
-                            ev.result === 'Missed' ? 'bg-red-500' :
-                            ev.result === 'Due' ? 'bg-amber-500' :
-                            'bg-blue-500'
-                          }`}></div>
+                          <div className={`absolute -left-[5px] top-1 w-2.5 h-2.5 rounded-full border border-white ${ev.result === 'Passed' ? 'bg-green-500' :
+                              ev.result === 'Missed' ? 'bg-red-500' :
+                                ev.result === 'Due' ? 'bg-amber-500' :
+                                  'bg-blue-500'
+                            }`}></div>
                           <div className="flex justify-between items-start mb-0.5">
                             <span className="text-xs font-bold text-gray-900">{ev.type}</span>
                             <span className="text-[10px] text-gray-500 font-mono">{ev.time}</span>

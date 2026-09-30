@@ -1,11 +1,53 @@
 "use client";
 
-import React from "react";
-import { Archive, DatabaseBackup, Clock, Trash2, HardDrive, Shield, Download, FileText } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Archive, DatabaseBackup, Clock, Trash2, HardDrive, Shield, Download, FileText, Loader2 } from "lucide-react";
 import { useToast } from "@/components/ui/ToastProvider";
+import { settingsService, RetentionPolicy } from "@/api/settings";
 
 export default function RetentionGovernancePage() {
   const { toast } = useToast();
+  const [policy, setPolicy] = useState<RetentionPolicy | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchPolicy();
+  }, []);
+
+  const fetchPolicy = async () => {
+    setLoading(true);
+    try {
+      const data = await settingsService.getRetentionPolicy();
+      setPolicy(data || {
+        activeStorageYears: 3,
+        coldArchiveYears: 7,
+        selfiePurgeDays: 90,
+        locationTrailPurgeDays: 180
+      });
+    } catch (error) {
+      console.warn('Backend API not yet implemented, using fallback data.');
+      // Fallback data if API is not yet implemented on backend
+      setPolicy({
+        activeStorageYears: 3,
+        coldArchiveYears: 7,
+        selfiePurgeDays: 90,
+        locationTrailPurgeDays: 180
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updatePolicy = async (updates: Partial<RetentionPolicy>) => {
+    try {
+      await settingsService.updateRetentionPolicy(updates);
+      toast("Success", "Retention policy updated successfully", "success");
+      fetchPolicy();
+    } catch (error) {
+      toast("Error", "Failed to update retention policy", "error");
+    }
+  };
+
   return (
     <div className="flex flex-col h-full bg-[#F7F8FA] min-h-screen">
       {/* Header */}
@@ -43,17 +85,21 @@ export default function RetentionGovernancePage() {
                   <h4 className="text-sm font-semibold text-gray-900">Active Storage Duration</h4>
                   <p className="text-xs text-gray-500 mt-0.5">Time kept in hot database</p>
                 </div>
-                <div className="bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-md text-sm font-medium text-gray-700">3 Years</div>
+                <div className="bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-md text-sm font-medium text-gray-700">
+                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : `${policy?.activeStorageYears} Years`}
+                </div>
               </div>
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="text-sm font-semibold text-gray-900">Cold Archive Duration</h4>
                   <p className="text-xs text-gray-500 mt-0.5">Time kept in glacier storage</p>
                 </div>
-                <div className="bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-md text-sm font-medium text-gray-700">7 Years</div>
+                <div className="bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-md text-sm font-medium text-gray-700">
+                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : `${policy?.coldArchiveYears} Years`}
+                </div>
               </div>
               <div className="pt-4 border-t border-gray-100 flex justify-end">
-                <button className="text-[13px] font-medium text-blue-600 hover:text-blue-700">Modify Policy</button>
+                <button onClick={() => updatePolicy({ activeStorageYears: 5 })} className="text-[13px] font-medium text-blue-600 hover:text-blue-700">Modify Policy</button>
               </div>
             </div>
           </div>
@@ -75,17 +121,21 @@ export default function RetentionGovernancePage() {
                   <h4 className="text-sm font-semibold text-gray-900">Selfie / Photo Purge</h4>
                   <p className="text-xs text-gray-500 mt-0.5">Automatic deletion of raw images</p>
                 </div>
-                <div className="bg-red-50 border border-red-200 px-3 py-1.5 rounded-md text-sm font-medium text-red-700">90 Days</div>
+                <div className="bg-red-50 border border-red-200 px-3 py-1.5 rounded-md text-sm font-medium text-red-700">
+                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : `${policy?.selfiePurgeDays} Days`}
+                </div>
               </div>
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="text-sm font-semibold text-gray-900">Raw Location Trail Purge</h4>
                   <p className="text-xs text-gray-500 mt-0.5">Automatic deletion of high-res GPS paths</p>
                 </div>
-                <div className="bg-red-50 border border-red-200 px-3 py-1.5 rounded-md text-sm font-medium text-red-700">180 Days</div>
+                <div className="bg-red-50 border border-red-200 px-3 py-1.5 rounded-md text-sm font-medium text-red-700">
+                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : `${policy?.locationTrailPurgeDays} Days`}
+                </div>
               </div>
               <div className="pt-4 border-t border-gray-100 flex justify-end">
-                <button className="text-[13px] font-medium text-blue-600 hover:text-blue-700">Modify Policy</button>
+                <button onClick={() => updatePolicy({ selfiePurgeDays: 120 })} className="text-[13px] font-medium text-blue-600 hover:text-blue-700">Modify Policy</button>
               </div>
             </div>
           </div>

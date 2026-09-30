@@ -14,9 +14,9 @@ export const CurrentStatusView = ({ refreshKey }: { refreshKey: number }) => {
     let mounted = true;
     setLoading(true);
     getCurrentAttendanceStatus()
-      .then((res) => {
+      .then((res: any) => {
         if (!mounted) return;
-        setData(res);
+        setData(res?.items || (Array.isArray(res) ? res : []));
       })
       .catch(() => {
         if (mounted) setError(true);
@@ -65,15 +65,15 @@ export const CurrentStatusView = ({ refreshKey }: { refreshKey: number }) => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {data.length === 0 ? (
+            {(!data || data.length === 0) ? (
               <tr>
                 <td colSpan={6} className="px-6 py-12 text-center text-sm text-gray-500">
                   No current attendance data available.
                 </td>
               </tr>
             ) : (
-              data.map((row) => (
-                <tr key={row.employee_id} className="hover:bg-gray-50 transition-colors">
+              data.map((row, index) => (
+                <tr key={row.employee_id || index} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4">
                     <div className="text-sm font-medium text-gray-900">{row.employee_name}</div>
                     <div className="text-xs text-gray-500">{row.employee_id}</div>

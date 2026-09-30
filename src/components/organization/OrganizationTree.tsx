@@ -12,7 +12,8 @@ interface TreeNodeProps {
   selectedNode: OrganizationNode | null;
 }
 
-const getIcon = (type: string) => {
+const getIcon = (type?: string) => {
+  if (!type) return <div className="w-4 h-4 border border-gray-300 rounded-sm" />;
   switch (type.toLowerCase()) {
     case 'organization': return <Building2 className="w-4 h-4 text-blue-600" />;
     case 'department': return <Briefcase className="w-4 h-4 text-indigo-600" />;

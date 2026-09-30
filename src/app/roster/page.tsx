@@ -3,12 +3,24 @@
 import React, { useState } from "react";
 import { Calendar, Users, FileSpreadsheet, AlertTriangle, Briefcase, Settings, Plus, Download } from "lucide-react";
 import { ShiftTemplatesList } from "@/components/shifts/ShiftTemplatesList";
+import { Tabs } from "@/components/ui/Tabs";
 
 export default function RosterDutyPage() {
   const [activeTab, setActiveTab] = useState("overview");
 
+  const tabs = [
+    { id: "overview", label: "Overview", icon: Calendar },
+    { id: "roster", label: "Roster", icon: Users },
+    { id: "shifts", label: "Shifts", icon: Calendar },
+    { id: "duties", label: "Duties", icon: Briefcase },
+    { id: "duty-types", label: "Duty Types", icon: Settings },
+    { id: "conflicts", label: "Conflicts", icon: AlertTriangle },
+  ];
+
+  const activeIndex = tabs.findIndex(t => t.id === activeTab);
+
   return (
-    <div className="flex flex-col h-full bg-gray-50 min-h-screen">
+    <div className="flex flex-col h-full bg-transparent min-h-screen">
       {/* Header */}
       <div className="bg-white border-b px-6 py-4 flex items-center justify-between shadow-sm">
         <div>
@@ -21,15 +33,15 @@ export default function RosterDutyPage() {
           <p className="text-sm text-gray-500 mt-1">Manage shifts, employee rosters, duty assignments, reassignments and checkpoints.</p>
         </div>
         <div className="flex gap-3">
-           <button className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-sm focus:outline-none">
+           <button className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-[13px] font-semibold text-gray-700 hover:bg-blue-50/30 hover:text-blue-700 hover:border-blue-200 hover:shadow-md hover:-translate-y-[1px] transition-all duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] shadow-[0_1px_2px_rgba(0,0,0,0.02)] focus:outline-none focus:ring-2 focus:ring-blue-500/20 active:scale-[0.98] active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed">
             <Download className="w-4 h-4" />
             Import Roster
           </button>
-          <button className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm focus:outline-none">
+          <button className="inline-flex items-center gap-2 px-4 py-2 bg-[#1d4ed8] text-white rounded-lg text-[13px] font-semibold hover:bg-[#1e40af] hover:shadow-[0_4px_12px_rgba(29,78,216,0.25)] hover:-translate-y-[1px] transition-all duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 active:scale-[0.98] active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed">
             <Plus className="w-4 h-4" />
             Create Roster
           </button>
-           <button className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm focus:outline-none">
+           <button className="inline-flex items-center gap-2 px-4 py-2 bg-[#1d4ed8] text-white rounded-lg text-[13px] font-semibold hover:bg-[#1e40af] hover:shadow-[0_4px_12px_rgba(29,78,216,0.25)] hover:-translate-y-[1px] transition-all duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 active:scale-[0.98] active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed">
             <Briefcase className="w-4 h-4" />
             Assign Duty
           </button>
@@ -38,34 +50,38 @@ export default function RosterDutyPage() {
 
       {/* Top Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 p-6 pb-0">
-        <div className="bg-white p-5 rounded-lg border border-gray-200 shadow-sm flex flex-col justify-between">
-            <span className="text-sm font-medium text-gray-500">Today's Roster</span>
+        <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-[0_2px_4px_rgba(0,0,0,0.02)] flex flex-col justify-between transition-all duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] hover:-translate-y-[2px] hover:shadow-[0_8px_16px_rgba(0,0,0,0.04)] hover:border-blue-100 group cursor-pointer relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-500/0 via-blue-500/0 to-blue-500/0 group-hover:from-blue-500/40 group-hover:via-blue-500/60 group-hover:to-blue-500/40 transition-all duration-500"></div>
+            <span className="text-sm font-medium text-gray-500 group-hover:text-blue-700 transition-colors duration-300">Today's Roster</span>
             <div className="mt-2 flex items-baseline gap-2">
-                <span className="text-2xl font-bold text-gray-900">--</span>
+                <span className="text-2xl font-bold text-gray-900 group-hover:text-blue-900 transition-colors duration-300">--</span>
                 <span className="text-sm text-gray-500">Scheduled</span>
             </div>
              <p className="text-xs text-gray-500 mt-2">No data available</p>
         </div>
-        <div className="bg-white p-5 rounded-lg border border-gray-200 shadow-sm flex flex-col justify-between">
-            <span className="text-sm font-medium text-gray-500">Active Duties</span>
+        <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-[0_2px_4px_rgba(0,0,0,0.02)] flex flex-col justify-between transition-all duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] hover:-translate-y-[2px] hover:shadow-[0_8px_16px_rgba(0,0,0,0.04)] hover:border-blue-100 group cursor-pointer relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-500/0 via-blue-500/0 to-blue-500/0 group-hover:from-blue-500/40 group-hover:via-blue-500/60 group-hover:to-blue-500/40 transition-all duration-500"></div>
+            <span className="text-sm font-medium text-gray-500 group-hover:text-blue-700 transition-colors duration-300">Active Duties</span>
             <div className="mt-2 flex items-baseline gap-2">
-                <span className="text-2xl font-bold text-gray-900">--</span>
+                <span className="text-2xl font-bold text-gray-900 group-hover:text-blue-900 transition-colors duration-300">--</span>
                 <span className="text-sm text-gray-500">Ongoing</span>
             </div>
             <p className="text-xs text-gray-500 mt-2">No data available</p>
         </div>
-        <div className="bg-white p-5 rounded-lg border border-gray-200 shadow-sm flex flex-col justify-between">
-            <span className="text-sm font-medium text-gray-500">Roster Conflicts</span>
+        <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-[0_2px_4px_rgba(0,0,0,0.02)] flex flex-col justify-between transition-all duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] hover:-translate-y-[2px] hover:shadow-[0_8px_16px_rgba(0,0,0,0.04)] hover:border-blue-100 group cursor-pointer relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-500/0 via-blue-500/0 to-blue-500/0 group-hover:from-blue-500/40 group-hover:via-blue-500/60 group-hover:to-blue-500/40 transition-all duration-500"></div>
+            <span className="text-sm font-medium text-gray-500 group-hover:text-blue-700 transition-colors duration-300">Roster Conflicts</span>
             <div className="mt-2 flex items-baseline gap-2">
-                <span className="text-2xl font-bold text-gray-900">--</span>
+                <span className="text-2xl font-bold text-gray-900 group-hover:text-blue-900 transition-colors duration-300">--</span>
                 <span className="text-sm text-gray-500">Unresolved</span>
             </div>
             <p className="text-xs text-gray-500 mt-2">No data available</p>
         </div>
-        <div className="bg-white p-5 rounded-lg border border-gray-200 shadow-sm flex flex-col justify-between">
-            <span className="text-sm font-medium text-gray-500">Pending Assignments</span>
+        <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-[0_2px_4px_rgba(0,0,0,0.02)] flex flex-col justify-between transition-all duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] hover:-translate-y-[2px] hover:shadow-[0_8px_16px_rgba(0,0,0,0.04)] hover:border-blue-100 group cursor-pointer relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-500/0 via-blue-500/0 to-blue-500/0 group-hover:from-blue-500/40 group-hover:via-blue-500/60 group-hover:to-blue-500/40 transition-all duration-500"></div>
+            <span className="text-sm font-medium text-gray-500 group-hover:text-blue-700 transition-colors duration-300">Pending Assignments</span>
             <div className="mt-2 flex items-baseline gap-2">
-                <span className="text-2xl font-bold text-gray-900">--</span>
+                <span className="text-2xl font-bold text-gray-900 group-hover:text-blue-900 transition-colors duration-300">--</span>
                 <span className="text-sm text-gray-500">Requires Action</span>
             </div>
             <p className="text-xs text-gray-500 mt-2">No data available</p>
@@ -74,43 +90,13 @@ export default function RosterDutyPage() {
 
       {/* Main Content */}
       <div className="flex-1 p-6">
-          <div className="flex space-x-1 mb-6 bg-white border border-gray-200 p-1 rounded-lg shadow-sm">
-            <button
-              onClick={() => setActiveTab("overview")}
-              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === "overview" ? "bg-gray-100 text-gray-900" : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"}`}
-            >
-              <Calendar className="w-4 h-4" /> Overview
-            </button>
-            <button
-              onClick={() => setActiveTab("roster")}
-              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === "roster" ? "bg-gray-100 text-gray-900" : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"}`}
-            >
-              <Users className="w-4 h-4" /> Roster
-            </button>
-             <button
-              onClick={() => setActiveTab("shifts")}
-              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === "shifts" ? "bg-gray-100 text-gray-900" : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"}`}
-            >
-              <Calendar className="w-4 h-4" /> Shifts
-            </button>
-            <button
-              onClick={() => setActiveTab("duties")}
-              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === "duties" ? "bg-gray-100 text-gray-900" : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"}`}
-            >
-              <Briefcase className="w-4 h-4" /> Duties
-            </button>
-            <button
-              onClick={() => setActiveTab("duty-types")}
-              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === "duty-types" ? "bg-gray-100 text-gray-900" : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"}`}
-            >
-              <Settings className="w-4 h-4" /> Duty Types
-            </button>
-            <button
-              onClick={() => setActiveTab("conflicts")}
-              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === "conflicts" ? "bg-gray-100 text-gray-900" : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"}`}
-            >
-              <AlertTriangle className="w-4 h-4" /> Conflicts
-            </button>
+          <div className="mb-8">
+            <Tabs
+              tabs={tabs}
+              activeId={activeTab}
+              onChange={setActiveTab}
+              variant="pill"
+            />
           </div>
 
           {activeTab === "overview" && (

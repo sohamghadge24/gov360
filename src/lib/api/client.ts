@@ -1,4 +1,4 @@
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 interface RequestOptions extends RequestInit {
   requireAuth?: boolean;
@@ -10,7 +10,14 @@ export const fetchApi = async <T>(endpoint: string, options: RequestOptions = {}
   const url = endpoint.startsWith('http') ? endpoint : `${API_BASE_URL}${endpoint}`;
   
   const headers = new Headers(init.headers);
-  headers.set('Content-Type', 'application/json');
+  if (!headers.has('Content-Type') && typeof FormData !== 'undefined' && !(init.body instanceof FormData)) {
+    headers.set('Content-Type', 'application/json');
+  } else if (!headers.has('Content-Type') && typeof FormData === 'undefined') {
+    headers.set('Content-Type', 'application/json');
+  }
+  if (!headers.has('X-Request-ID')) {
+    headers.set('X-Request-ID', crypto.randomUUID());
+  }
 
   if (requireAuth) {
     const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
@@ -33,7 +40,15 @@ export const fetchApi = async <T>(endpoint: string, options: RequestOptions = {}
         window.location.href = '/login';
       }
     }
+    if (response.status === 404) {
+      console.warn(`API Not Found (404): ${url}. Returning null.`);
+      return null as any;
+    }
     const errorData = await response.json().catch(() => null);
+    if (errorData?.error) {
+      // Blueprint error envelope
+      throw new Error(errorData.error.message || `API error: ${response.status}`);
+    }
     throw new Error(errorData?.message || `API error: ${response.status}`);
   }
 

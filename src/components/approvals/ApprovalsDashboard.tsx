@@ -5,6 +5,7 @@ import { PendingApprovalsQueue } from "./PendingApprovalsQueue";
 import { ExceptionQueue } from "./ExceptionQueue";
 import { EscalationRules } from "./EscalationRules";
 import { ExceptionDetailDrawer } from "./ExceptionDetailDrawer";
+import { Tabs } from "@/components/ui/Tabs";
 
 export const ApprovalsDashboard = () => {
   const [activeTab, setActiveTab] = useState<'pending' | 'exceptions' | 'escalated' | 'rules'>('pending');
@@ -18,7 +19,7 @@ export const ApprovalsDashboard = () => {
   ] as const;
 
   return (
-    <div className="flex flex-col h-full bg-gray-50 min-h-screen pb-10">
+    <div className="flex flex-col h-full bg-transparent min-h-screen pb-10">
       <div className="bg-white border-b px-6 py-4 flex flex-col md:flex-row md:items-center justify-between shadow-sm sticky top-0 z-10 gap-4">
         <div>
           <nav className="text-sm font-medium text-gray-500 mb-1">
@@ -30,16 +31,14 @@ export const ApprovalsDashboard = () => {
           <p className="text-sm text-gray-500 mt-1">Review exceptions, approval requests and escalated workflow actions within your authorized scope.</p>
         </div>
 
-        <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg border border-gray-200">
-          {tabs.map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === tab.id ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200/50'}`}
-            >
-              {tab.label}
-            </button>
-          ))}
+        <div className="flex bg-gray-100 p-1 rounded-xl border border-gray-200">
+          <Tabs
+            tabs={tabs as any}
+            activeId={activeTab}
+            onChange={(id) => setActiveTab(id as any)}
+            variant="pill"
+            className="w-full !border-none !bg-transparent"
+          />
         </div>
       </div>
 

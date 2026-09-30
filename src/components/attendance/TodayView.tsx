@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { getTodayAttendance, AttendanceSession } from "@/api/attendance";
-import { Loader2 } from "lucide-react";
+import { Loader2, Calendar } from "lucide-react";
 
 export const TodayView = ({ refreshKey }: { refreshKey: number }) => {
   const [data, setData] = useState<AttendanceSession | null>(null);
@@ -85,6 +85,3 @@ export const TodayView = ({ refreshKey }: { refreshKey: number }) => {
     </div>
   );
 };
-
-// Assuming lucide-react Calendar is needed above, let's import it.
-import { Calendar } from "lucide-react";

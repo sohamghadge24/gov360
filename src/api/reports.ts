@@ -100,32 +100,32 @@ const buildQuery = (params?: Record<string, any>) => {
 };
 
 export const reportService = {
-  getDailyAttendance: (params?: any) => fetchApi<{ data: DailyAttendanceReport[], summary?: any }>(`/v1/reports/daily-attendance${buildQuery(params)}`),
-  getMonthlyAttendance: (params?: any) => fetchApi<any>(`/v1/reports/monthly-attendance${buildQuery(params)}`),
-  getVerificationCompliance: (params?: any) => fetchApi<{ data: VerificationComplianceReport[], summary?: any }>(`/v1/reports/verification-compliance${buildQuery(params)}`),
-  getMissedVerifications: (params?: any) => fetchApi<MissedVerificationReport[]>(`/v1/reports/missed-verifications${buildQuery(params)}`),
-  getLocationExceptions: (params?: any) => fetchApi<LocationExceptionReport[]>(`/v1/reports/location-exceptions${buildQuery(params)}`),
-  getFieldDuty: (params?: any) => fetchApi<FieldDutyReport[]>(`/v1/reports/field-duty${buildQuery(params)}`),
-  getEmployeeReport: (id: string, params?: any) => fetchApi<any>(`/v1/reports/employee/${id}${buildQuery(params)}`),
+  getDailyAttendance: (params?: any) => fetchApi<{ data: DailyAttendanceReport[], summary?: any }>(`/api/v1/reports/daily-attendance${buildQuery(params)}`),
+  getMonthlyAttendance: (params?: any) => fetchApi<any>(`/api/v1/reports/monthly-attendance${buildQuery(params)}`),
+  getVerificationCompliance: (params?: any) => fetchApi<{ data: VerificationComplianceReport[], summary?: any }>(`/api/v1/reports/verification-compliance${buildQuery(params)}`),
+  getMissedVerifications: (params?: any) => fetchApi<MissedVerificationReport[]>(`/api/v1/reports/missed-verifications${buildQuery(params)}`),
+  getLocationExceptions: (params?: any) => fetchApi<LocationExceptionReport[]>(`/api/v1/reports/location-exceptions${buildQuery(params)}`),
+  getFieldDuty: (params?: any) => fetchApi<FieldDutyReport[]>(`/api/v1/reports/field-duty${buildQuery(params)}`),
+  getEmployeeReport: (id: string, params?: any) => fetchApi<any>(`/api/v1/reports/employee/${id}${buildQuery(params)}`),
 };
 
 export const analyticsService = {
-  getDashboard: (params?: any) => fetchApi<AnalyticsDashboard>(`/v1/analytics/dashboard${buildQuery(params)}`),
+  getDashboard: (params?: any) => fetchApi<AnalyticsDashboard>(`/api/v1/analytics/dashboard${buildQuery(params)}`),
 };
 
 export const reportJobService = {
-  createJob: (payload: { reportType: string; format: string; filters?: any }) => fetchApi<ReportJob>('/v1/report-jobs', {
+  createJob: (payload: { reportType: string; format: string; filters?: any }) => fetchApi<ReportJob>('/api/v1/exports', {
     method: 'POST',
     body: JSON.stringify(payload)
   }),
-  getJob: (id: string) => fetchApi<ReportJob>(`/v1/report-jobs/${id}`),
-  download: (id: string) => fetchApi<{ downloadUrl: string }>(`/v1/report-jobs/${id}/download`),
-  getHistory: () => fetchApi<ReportJob[]>('/v1/report-jobs')
+  getJob: (id: string) => fetchApi<ReportJob>(`/api/v1/exports/${id}`),
+  download: (id: string) => fetchApi<{ downloadUrl: string }>(`/api/v1/exports/${id}/download`),
+  getHistory: () => fetchApi<ReportJob[]>('/api/v1/exports')
 };
 
 export const scheduledReportService = {
-  getScheduledReports: (params?: any) => fetchApi<ScheduledReport[]>(`/v1/scheduled-reports${buildQuery(params)}`),
-  createScheduledReport: (payload: any) => fetchApi<ScheduledReport>('/v1/scheduled-reports', {
+  getScheduledReports: (params?: any) => fetchApi<ScheduledReport[]>(`/api/v1/scheduled-reports${buildQuery(params)}`),
+  createScheduledReport: (payload: any) => fetchApi<ScheduledReport>('/api/v1/scheduled-reports', {
     method: 'POST',
     body: JSON.stringify(payload)
   })

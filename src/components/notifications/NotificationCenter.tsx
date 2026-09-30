@@ -119,7 +119,7 @@ export const NotificationCenter = ({ hideHeader = false }: { hideHeader?: boolea
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`px-6 py-4 text-sm font-medium border-b-2 whitespace-nowrap transition-colors ${filter === f ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}
+                className={`px-6 py-4 -mb-[1px] text-sm font-medium border-b-2 whitespace-nowrap transition-all duration-300 ease-out ${filter === f ? 'border-blue-600 text-blue-600 bg-blue-50/20' : 'border-transparent text-gray-500 hover:text-gray-800 hover:border-gray-300 hover:bg-gray-50/50'}`}
               >
                 {f.charAt(0).toUpperCase() + f.slice(1)}
               </button>
@@ -128,9 +128,11 @@ export const NotificationCenter = ({ hideHeader = false }: { hideHeader?: boolea
           <div className="pr-4">
             <button 
               onClick={() => fetchNotifications(false)}
-              className="text-sm text-gray-500 hover:text-gray-900 flex items-center gap-1"
+              disabled={loading}
+              className="text-sm text-gray-500 hover:text-gray-900 flex items-center gap-1 transition-all duration-200 ease-out active:scale-[0.95] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
             >
-              <Settings className="w-4 h-4" /> Refresh
+              <Settings className={`w-4 h-4 transition-transform duration-300 ${loading ? 'animate-spin' : ''}`} /> 
+              {loading ? 'Refreshing...' : 'Refresh'}
             </button>
           </div>
         </div>

@@ -24,6 +24,13 @@ export const LocationsWorkspace = () => {
   const [valLat, setValLat] = useState("");
   const [valLng, setValLng] = useState("");
   const [valResult, setValResult] = useState<any>(null);
+  
+  // Create state
+  const [newType, setNewType] = useState<GeofenceType>('Circle');
+  const [newName, setNewName] = useState("");
+  const [newEffectiveFrom, setNewEffectiveFrom] = useState("");
+  const [newTolerance, setNewTolerance] = useState(50);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -57,6 +64,30 @@ export const LocationsWorkspace = () => {
       setValResult(res);
     } catch (err) {
       setValResult({ result: "API Error" });
+    }
+  };
+
+  const handleCreate = async () => {
+    if (!newName || !newEffectiveFrom) return;
+    setIsSubmitting(true);
+    try {
+      await geofenceService.createGeofence({
+        name: newName,
+        type: newType,
+        status: 'Active',
+        effectiveFrom: newEffectiveFrom,
+        tolerance: newTolerance,
+        scope: 'Global'
+      });
+      setShowCreate(false);
+      setNewName("");
+      setNewEffectiveFrom("");
+      fetchData();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to create location.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -304,32 +335,32 @@ export const LocationsWorkspace = () => {
                <div>
                  <label className="text-[13px] font-semibold text-gray-700 block mb-1.5">Type</label>
                  <div className="grid grid-cols-3 gap-3">
-                   <div className="border border-blue-600 bg-blue-50 rounded-lg p-3 text-center cursor-pointer">
-                     <MapPin className="w-5 h-5 text-blue-600 mx-auto mb-1" />
-                     <span className="text-[11px] font-bold text-blue-700 uppercase">Circle</span>
+                   <div onClick={() => setNewType('Circle')} className={`border ${newType === 'Circle' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 bg-white hover:bg-gray-50'} rounded-lg p-3 text-center cursor-pointer`}>
+                     <MapPin className={`w-5 h-5 mx-auto mb-1 ${newType === 'Circle' ? 'text-blue-600' : 'text-gray-400'}`} />
+                     <span className={`text-[11px] font-bold uppercase ${newType === 'Circle' ? 'text-blue-700' : 'text-gray-600'}`}>Circle</span>
                    </div>
-                   <div className="border border-gray-200 bg-white hover:bg-gray-50 rounded-lg p-3 text-center cursor-pointer">
-                     <Map className="w-5 h-5 text-gray-400 mx-auto mb-1" />
-                     <span className="text-[11px] font-bold text-gray-600 uppercase">Polygon</span>
+                   <div onClick={() => setNewType('Polygon')} className={`border ${newType === 'Polygon' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 bg-white hover:bg-gray-50'} rounded-lg p-3 text-center cursor-pointer`}>
+                     <Map className={`w-5 h-5 mx-auto mb-1 ${newType === 'Polygon' ? 'text-blue-600' : 'text-gray-400'}`} />
+                     <span className={`text-[11px] font-bold uppercase ${newType === 'Polygon' ? 'text-blue-700' : 'text-gray-600'}`}>Polygon</span>
                    </div>
-                   <div className="border border-gray-200 bg-white hover:bg-gray-50 rounded-lg p-3 text-center cursor-pointer">
-                     <Navigation className="w-5 h-5 text-gray-400 mx-auto mb-1" />
-                     <span className="text-[11px] font-bold text-gray-600 uppercase">Route</span>
+                   <div onClick={() => setNewType('RouteCorridor')} className={`border ${newType === 'RouteCorridor' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 bg-white hover:bg-gray-50'} rounded-lg p-3 text-center cursor-pointer`}>
+                     <Navigation className={`w-5 h-5 mx-auto mb-1 ${newType === 'RouteCorridor' ? 'text-blue-600' : 'text-gray-400'}`} />
+                     <span className={`text-[11px] font-bold uppercase ${newType === 'RouteCorridor' ? 'text-blue-700' : 'text-gray-600'}`}>Route</span>
                    </div>
                  </div>
                </div>
                <div>
                  <label className="text-[13px] font-semibold text-gray-700 block mb-1.5">Name *</label>
-                 <input type="text" className="w-full border border-gray-300 rounded-lg p-2.5 text-[14px] outline-blue-500" placeholder="e.g. Ward 12 Boundary" />
+                 <input type="text" value={newName} onChange={e => setNewName(e.target.value)} className="w-full border border-gray-300 rounded-lg p-2.5 text-[14px] outline-blue-500" placeholder="e.g. Ward 12 Boundary" />
                </div>
                <div className="grid grid-cols-2 gap-4">
                  <div>
                    <label className="text-[13px] font-semibold text-gray-700 block mb-1.5">Effective From *</label>
-                   <input type="date" className="w-full border border-gray-300 rounded-lg p-2 text-[14px] outline-blue-500" />
+                   <input type="date" value={newEffectiveFrom} onChange={e => setNewEffectiveFrom(e.target.value)} className="w-full border border-gray-300 rounded-lg p-2 text-[14px] outline-blue-500" />
                  </div>
                  <div>
                    <label className="text-[13px] font-semibold text-gray-700 block mb-1.5">Tolerance (m)</label>
-                   <input type="number" defaultValue="50" className="w-full border border-gray-300 rounded-lg p-2 text-[14px] outline-blue-500" />
+                   <input type="number" value={newTolerance} onChange={e => setNewTolerance(Number(e.target.value))} className="w-full border border-gray-300 rounded-lg p-2 text-[14px] outline-blue-500" />
                  </div>
                </div>
                <div>
@@ -343,7 +374,9 @@ export const LocationsWorkspace = () => {
             </div>
             <div className="p-4 border-t border-gray-200 bg-gray-50 flex justify-end gap-3">
               <button onClick={() => setShowCreate(false)} className="px-5 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 rounded-lg transition-colors">Cancel</button>
-              <button className="px-5 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm transition-colors">Proceed to Map</button>
+              <button onClick={handleCreate} disabled={isSubmitting || !newName || !newEffectiveFrom} className="px-5 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm transition-colors disabled:opacity-50">
+                {isSubmitting ? 'Saving...' : 'Save Location'}
+              </button>
             </div>
           </div>
         </div>

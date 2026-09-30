@@ -9,7 +9,7 @@ import { useAuth } from '@/lib/context/AuthContext';
 export default function LoginPage() {
   const router = useRouter();
   const { user, loading: authLoading, refreshAuth } = useAuth();
-  
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -31,13 +31,13 @@ export default function LoginPage() {
 
     try {
       const response = await authApi.login({ email, password });
-      
+
       if (response.access_token) {
         localStorage.setItem('access_token', response.access_token);
         if (response.refresh_token) {
           localStorage.setItem('refresh_token', response.refresh_token);
         }
-        
+
         await refreshAuth();
       }
     } catch (err: any) {
@@ -85,7 +85,7 @@ export default function LoginPage() {
           <h1 className="text-3xl font-bold text-white leading-tight mb-4">
             Smart Attendance &<br />Field Monitoring
           </h1>
-          
+
           <p className="text-slate-300 text-[15px] mb-10 leading-relaxed max-w-sm">
             Secure workforce attendance, duty verification and field operations — in one platform.
           </p>
@@ -116,7 +116,7 @@ export default function LoginPage() {
       {/* Right Auth Panel (approx 58%) */}
       <div className="flex-1 flex flex-col items-center justify-center p-6 lg:p-12 overflow-y-auto">
         <div className="w-full max-w-[440px] bg-white p-8 md:p-10 shadow-sm rounded-2xl border border-gray-200/60">
-          
+
           <div className="lg:hidden flex items-center gap-2 mb-8 justify-center">
             <MapPin className="w-6 h-6 text-blue-600" />
             <span className="text-2xl font-bold text-gray-900 tracking-tight">GovTrack360</span>
@@ -126,7 +126,18 @@ export default function LoginPage() {
             <h2 className="text-[24px] font-bold text-gray-900 mb-2">Welcome back</h2>
             <p className="text-sm text-gray-500 font-medium">Use your authorized organizational account.</p>
           </div>
-          
+
+          <button
+            type="button"
+            onClick={() => {
+              setEmail('admin@gov.in');
+              setPassword('admin123');
+            }}
+            className="w-full mb-6 bg-indigo-50 text-indigo-700 rounded-lg py-2 px-4 text-[13px] font-semibold hover:bg-indigo-100 transition-colors border border-indigo-200"
+          >
+            Use Demo Credentials
+          </button>
+
           {error && (
             <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-[13px] font-medium flex items-start gap-3">
               <div className="shrink-0 mt-0.5">
@@ -145,10 +156,10 @@ export default function LoginPage() {
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <User className="h-4 w-4 text-gray-400" />
                 </div>
-                <input 
+                <input
                   id="email"
                   name="email"
-                  type="text" 
+                  type="text"
                   required
                   disabled={loading}
                   value={email}
@@ -159,14 +170,14 @@ export default function LoginPage() {
                 />
               </div>
             </div>
-            
+
             <div>
               <label htmlFor="password" className="block text-[13px] font-semibold text-gray-700 mb-1.5">Password</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Lock className="h-4 w-4 text-gray-400" />
                 </div>
-                <input 
+                <input
                   id="password"
                   name="password"
                   type={showPassword ? "text" : "password"}
@@ -207,18 +218,18 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={loading || !email || !password}
               className="w-full bg-blue-600 text-white rounded-lg py-2.5 px-4 text-[14px] font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 mt-4"
             >
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}
               {loading ? 'Authenticating...' : 'Sign In'}
             </button>
-            
+
             <div className="text-center mt-6">
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={() => alert("Please contact your organization's administrator to reset access.")}
                 className="text-[13px] font-semibold text-blue-600 hover:text-blue-800 transition-colors"
               >
@@ -228,10 +239,10 @@ export default function LoginPage() {
           </form>
 
           <div className="mt-10 pt-6 border-t border-gray-100 flex flex-col items-center">
-             <p className="text-[12px] text-gray-400 mb-3 uppercase tracking-wider font-semibold">SSO / Organization Login</p>
-             <button className="w-full bg-gray-50 border border-gray-200 text-gray-700 rounded-lg py-2.5 px-4 text-[14px] font-semibold hover:bg-gray-100 transition-colors flex items-center justify-center gap-2">
-                Continue with Microsoft Entra ID
-             </button>
+            <p className="text-[12px] text-gray-400 mb-3 uppercase tracking-wider font-semibold">SSO / Organization Login</p>
+            <button className="w-full bg-gray-50 border border-gray-200 text-gray-700 rounded-lg py-2.5 px-4 text-[14px] font-semibold hover:bg-gray-100 transition-colors flex items-center justify-center gap-2">
+              Continue with Microsoft Entra ID
+            </button>
           </div>
         </div>
       </div>

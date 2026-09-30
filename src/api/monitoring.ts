@@ -1,4 +1,4 @@
-import { fetchApi } from './apiClient';
+import { fetchApi } from '@/lib/api/client';
 
 export interface MonitoringSummary {
   present: number;
@@ -89,28 +89,28 @@ export interface RealtimeToken {
 
 export const monitoringService = {
   getSummary: () => 
-    fetchApi<MonitoringSummary>('/v1/monitoring/summary'),
+    fetchApi<MonitoringSummary>('/api/v1/monitoring/summary'),
     
   getStatusList: (params?: { search?: string, status?: string }) => {
     const qs = params ? new URLSearchParams(params as any).toString() : '';
-    return fetchApi<MonitoringEmployeeStatus[]>(`/v1/monitoring/status${qs ? `?${qs}` : ''}`);
+    return fetchApi<MonitoringEmployeeStatus[]>(`/api/v1/monitoring/status${qs ? `?${qs}` : ''}`);
   },
     
   getMapPoints: () => 
-    fetchApi<MonitoringMapPoint[]>('/v1/monitoring/map'),
+    fetchApi<MonitoringMapPoint[]>('/api/v1/monitoring/map'),
     
   getDueVerifications: () => 
-    fetchApi<DueVerification[]>('/v1/monitoring/due-verifications'),
+    fetchApi<DueVerification[]>('/api/v1/monitoring/due-verifications'),
     
   getEmployeeTimeline: (id: string) => 
-    fetchApi<TimelineEvent[]>(`/v1/monitoring/employee/${id}/timeline`),
+    fetchApi<TimelineEvent[]>(`/api/v1/monitoring/employee/${id}/timeline`),
     
   getFieldCoverage: () => 
-    fetchApi<FieldCoverage[]>('/v1/monitoring/field-coverage'),
+    fetchApi<FieldCoverage[]>('/api/v1/monitoring/field-coverage'),
     
   getRealtimeToken: () => 
-    fetchApi<RealtimeToken>('/v1/realtime/token'),
+    fetchApi<RealtimeToken>('/api/v1/realtime/token'),
     
   getExceptions: () => 
-    fetchApi<OperationalException[]>('/v1/exceptions'),
+    fetchApi<OperationalException[]>('/api/v1/exceptions'),
 };

@@ -1,4 +1,4 @@
-import { fetchApi } from './apiClient';
+import { fetchApi } from '@/lib/api/client';
 
 export interface Permission {
   id: string;
@@ -59,31 +59,31 @@ export interface AccessChange {
 
 export const rolesService = {
   getRoles: () => 
-    fetchApi<Role[]>('/v1/roles'),
+    fetchApi<Role[]>('/api/v1/roles'),
     
   getRole: (id: string) => 
-    fetchApi<Role>(`/v1/roles/${id}`),
+    fetchApi<Role>(`/api/v1/roles/${id}`),
     
   createRole: (payload: RoleCreatePayload) => 
-    fetchApi<Role>('/v1/roles', {
+    fetchApi<Role>('/api/v1/roles', {
       method: 'POST',
       body: JSON.stringify(payload),
     }),
     
   updateRole: (id: string, payload: RoleUpdatePayload) => 
-    fetchApi<Role>(`/v1/roles/${id}`, {
-      method: 'PUT',
+    fetchApi<Role>(`/api/v1/roles/${id}`, {
+      method: 'PATCH',
       body: JSON.stringify(payload),
     }),
 
   deleteRole: (id: string) => 
-    fetchApi<void>(`/v1/roles/${id}`, {
+    fetchApi<void>(`/api/v1/roles/${id}`, {
       method: 'DELETE',
     }),
     
   getPermissions: () => 
-    fetchApi<Permission[]>('/v1/permissions'),
+    fetchApi<Permission[]>('/api/v1/permissions'),
     
   getAccessChanges: () => 
-    fetchApi<AccessChange[]>('/v1/roles/changes'),
+    fetchApi<AccessChange[]>('/api/v1/roles/changes'),
 };

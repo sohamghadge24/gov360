@@ -5,7 +5,7 @@ import { Settings } from "lucide-react";
 
 export default function DutyTypesPage() {
   return (
-    <div className="flex flex-col h-full bg-gray-50 min-h-screen">
+    <div className="flex flex-col h-full bg-transparent min-h-screen">
       <div className="bg-white border-b px-6 py-4 flex items-center justify-between shadow-sm">
         <div>
           <nav className="text-sm font-medium text-gray-500 mb-1">

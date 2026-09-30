@@ -7,6 +7,8 @@ import {
 } from "lucide-react";
 import { notificationService, NotificationTemplate, NotificationRule, NotificationDelivery } from "@/api/notifications";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
+import { useToast } from "@/components/ui/ToastProvider";
+import { Tabs } from "@/components/ui/Tabs";
 
 export const AdminNotificationWorkspace = () => {
   const [activeTab, setActiveTab] = useState('inbox'); // inbox, templates, rules, broadcast, delivery
@@ -30,7 +32,7 @@ export const AdminNotificationWorkspace = () => {
           <div className="flex items-center gap-3 mt-4 md:mt-0">
             <button 
               onClick={() => setActiveTab('broadcast')}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 shadow-sm transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 hover:shadow-md active:scale-[0.98] transition-all duration-200 ease-out shadow-sm"
             >
               <Megaphone className="w-4 h-4" /> Create Broadcast
             </button>
@@ -38,38 +40,21 @@ export const AdminNotificationWorkspace = () => {
         )}
       </div>
 
-      <div className="bg-white border-b border-gray-200 px-6 flex items-center gap-6 shrink-0 overflow-x-auto">
-        <button
-          onClick={() => setActiveTab('inbox')}
-          className={`flex items-center gap-2 py-4 text-[14px] font-medium border-b-2 transition-colors whitespace-nowrap ${
-            activeTab === 'inbox' 
-              ? 'border-blue-600 text-blue-600' 
-              : 'border-transparent text-gray-500 hover:text-gray-900 hover:border-gray-300'
-          }`}
-        >
-          <Inbox className="w-4 h-4" />
-          Inbox
-        </button>
-        
-        {isAdmin && [
-          { id: 'templates', label: 'Templates', icon: FileText },
-          { id: 'rules', label: 'Rules', icon: Split },
-          { id: 'broadcast', label: 'Broadcasts', icon: Megaphone },
-          { id: 'delivery', label: 'Delivery', icon: Activity }
-        ].map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-2 py-4 text-[14px] font-medium border-b-2 transition-colors whitespace-nowrap ${
-              activeTab === tab.id 
-                ? 'border-blue-600 text-blue-600' 
-                : 'border-transparent text-gray-500 hover:text-gray-900 hover:border-gray-300'
-            }`}
-          >
-            <tab.icon className="w-4 h-4" />
-            {tab.label}
-          </button>
-        ))}
+      <div className="bg-white border-b border-gray-200 px-6 shrink-0">
+        <Tabs
+          tabs={[
+            { id: 'inbox', label: 'Inbox', icon: Inbox },
+            ...(isAdmin ? [
+              { id: 'templates', label: 'Templates', icon: FileText },
+              { id: 'rules', label: 'Rules', icon: Split },
+              { id: 'broadcast', label: 'Broadcasts', icon: Megaphone },
+              { id: 'delivery', label: 'Delivery', icon: Activity }
+            ] : [])
+          ]}
+          activeId={activeTab}
+          onChange={setActiveTab}
+          variant="line"
+        />
       </div>
 
       <div className="flex-1 overflow-auto p-6">
@@ -93,6 +78,7 @@ const TemplatesTab = () => {
   const [templates, setTemplates] = useState<NotificationTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     notificationService.getTemplates()
@@ -223,7 +209,15 @@ const TemplatesTab = () => {
             </div>
             <div className="p-4 border-t border-gray-200 bg-gray-50 flex justify-end gap-3 shrink-0">
               <button onClick={() => setShowCreate(false)} className="px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-200 rounded-lg">Cancel</button>
-              <button onClick={() => setShowCreate(false)} className="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm">Save Template</button>
+              <button onClick={async () => {
+                try {
+                  await notificationService.createTemplate({ name: 'New Template', channel: 'Push', language: 'English', status: 'Active' });
+                  toast('Template created successfully', undefined, 'success');
+                  setShowCreate(false);
+                } catch(e) {
+                  toast('Failed to create template', undefined, 'error');
+                }
+              }} className="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm">Save Template</button>
             </div>
           </div>
         </div>
@@ -235,6 +229,8 @@ const TemplatesTab = () => {
 const RulesTab = () => {
   const [rules, setRules] = useState<NotificationRule[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showCreate, setShowCreate] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     notificationService.getRules()
@@ -247,7 +243,7 @@ const RulesTab = () => {
     <div className="max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-lg font-bold text-gray-900">Notification Rules</h2>
-        <button className="flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-300 rounded text-sm font-medium text-gray-700 hover:bg-gray-50 shadow-sm">
+        <button onClick={() => setShowCreate(true)} className="flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-300 rounded text-sm font-medium text-gray-700 hover:bg-gray-50 shadow-sm">
           <Plus className="w-4 h-4" /> Create Rule
         </button>
       </div>
@@ -297,12 +293,42 @@ const RulesTab = () => {
           </tbody>
         </table>
       </div>
+      
+      {showCreate && (
+        <div className="fixed inset-0 z-50 flex items-center justify-end bg-gray-900/40 backdrop-blur-sm">
+          <div className="bg-white shadow-xl w-full max-w-md h-full overflow-hidden flex flex-col">
+            <div className="p-5 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <h2 className="text-[16px] font-bold text-gray-900">Create Rule</h2>
+              <button onClick={() => setShowCreate(false)} className="text-gray-400 hover:text-gray-700"><X className="w-5 h-5"/></button>
+            </div>
+            <div className="p-6 flex-1">
+              <p className="text-sm text-gray-600 mb-4">Rule configuration form.</p>
+              <input type="text" className="w-full border p-2 rounded mb-4" placeholder="Rule Name" />
+            </div>
+            <div className="p-4 border-t bg-gray-50 flex justify-end gap-3">
+              <button onClick={() => setShowCreate(false)} className="px-4 py-2 border rounded text-sm text-gray-600">Cancel</button>
+              <button onClick={async () => {
+                try {
+                  await notificationService.createRule({ name: 'New Rule', trigger: 'Manual', status: 'Active' });
+                  toast('Rule created successfully', undefined, 'success');
+                  setShowCreate(false);
+                } catch(e) {
+                  toast('Failed to create rule', undefined, 'error');
+                }
+              }} className="px-4 py-2 bg-blue-600 text-white rounded text-sm font-medium">Save</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 const BroadcastTab = () => {
   const [step, setStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
+  
   return (
     <div className="max-w-3xl mx-auto py-4">
       <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
@@ -372,11 +398,23 @@ const BroadcastTab = () => {
             
             <div className="pt-2 flex justify-between items-center border-t border-gray-100 pt-6">
               <button onClick={() => setStep(1)} className="px-6 py-2.5 bg-white border border-gray-300 text-gray-700 font-medium text-sm rounded-lg hover:bg-gray-50 transition-colors shadow-sm">Back to Edit</button>
-              <button onClick={() => {
-                alert('Broadcast Sent!');
-                setStep(1);
-              }} className="px-6 py-2.5 bg-green-600 text-white font-medium text-sm rounded-lg hover:bg-green-700 transition-colors shadow-sm flex items-center gap-2">
-                <Send className="w-4 h-4" /> Send Broadcast
+              <button 
+                onClick={async () => {
+                  setIsSubmitting(true);
+                  try {
+                    await notificationService.broadcast({ message: 'Urgent: Weather Advisory' });
+                    toast('Broadcast sent successfully!', undefined, 'success');
+                    setStep(1);
+                  } catch(e) {
+                    toast('Failed to send broadcast.', undefined, 'error');
+                  } finally {
+                    setIsSubmitting(false);
+                  }
+                }} 
+                disabled={isSubmitting}
+                className="px-6 py-2.5 bg-green-600 text-white font-medium text-sm rounded-lg hover:bg-green-700 hover:shadow-md active:scale-[0.98] transition-all duration-200 ease-out shadow-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 disabled:hover:shadow-sm"
+              >
+                {isSubmitting ? <><svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Sending...</> : <><Send className="w-4 h-4" /> Send Broadcast</>}
               </button>
             </div>
           </div>

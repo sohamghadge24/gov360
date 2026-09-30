@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import clsx from "clsx";
 import { getDepartments, Department } from "@/api/organization";
 import { MoreHorizontal, Plus } from "lucide-react";
+import { Tabs } from "@/components/ui/Tabs";
 
 const tabs = [
   { id: 'departments', label: 'Departments' },
@@ -26,7 +27,7 @@ const DepartmentsTable = () => {
     getDepartments()
       .then(res => {
         if (!mounted) return;
-        setData(res.items);
+        setData(res?.items || []);
       })
       .catch(() => {
         if (mounted) setError(true);
@@ -88,22 +89,13 @@ export const MasterDataTabs = () => {
   return (
     <div className="flex flex-col h-full bg-white">
       <div className="flex items-center justify-between border-b border-gray-200 px-4">
-        <nav className="flex space-x-4 overflow-x-auto" aria-label="Tabs">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={clsx(
-                "whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm transition-colors",
-                activeTab === tab.id
-                  ? "border-blue-500 text-blue-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-              )}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </nav>
+        <Tabs
+          tabs={tabs}
+          activeId={activeTab}
+          onChange={setActiveTab}
+          className="border-none"
+          tabClassName="px-1"
+        />
         <button className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-md text-sm font-medium hover:bg-blue-100 transition-colors">
           <Plus className="w-4 h-4" />
           Add {tabs.find(t => t.id === activeTab)?.label.slice(0, -1)}

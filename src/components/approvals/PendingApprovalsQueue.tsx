@@ -16,7 +16,7 @@ export const PendingApprovalsQueue = ({ onViewDetail }: Props) => {
   useEffect(() => {
     approvalsService.getPending()
       .then(res => {
-        setData(res || []);
+        setData(Array.isArray(res) ? res : (res as any)?.items || []);
         setError(null);
       })
       .catch(err => {

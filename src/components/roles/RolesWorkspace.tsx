@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Shield, ShieldAlert, Users, Key, MoreVertical, Plus, Search, Filter, ShieldCheck, Loader2, AlertTriangle, CheckCircle, Clock, X, Edit2, Archive, ChevronDown } from "lucide-react";
 import { rolesService, Role, Permission, AccessChange } from "@/api/roles";
+import { Tabs } from "@/components/ui/Tabs";
+import { useToast } from "@/components/ui/ToastProvider";
 
 export const RolesWorkspace = () => {
   const [activeTab, setActiveTab] = useState<'roles' | 'permissions' | 'changes'>('roles');
@@ -21,6 +23,11 @@ export const RolesWorkspace = () => {
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
+  
+  // Form state
+  const [formData, setFormData] = useState<Partial<Role>>({});
+  const [saving, setSaving] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     fetchData();
@@ -55,12 +62,24 @@ export const RolesWorkspace = () => {
 
   const handleRoleClick = (role: Role) => {
     setSelectedRole(role);
+    setFormData({
+      name: role.name,
+      description: role.description,
+      scopeType: role.scopeType,
+      permissions: [...(role.permissions || [])]
+    });
     setIsEditMode(false);
     setIsDrawerOpen(true);
   };
   
   const handleCreateClick = () => {
     setSelectedRole(null);
+    setFormData({
+      name: '',
+      description: '',
+      scopeType: 'Global',
+      permissions: []
+    });
     setIsEditMode(true);
     setIsDrawerOpen(true);
   };
@@ -69,6 +88,51 @@ export const RolesWorkspace = () => {
     setIsDrawerOpen(false);
     setSelectedRole(null);
     setIsEditMode(false);
+    setFormData({});
+  };
+
+  const handleSave = async () => {
+    try {
+      setSaving(true);
+      if (selectedRole) {
+        await rolesService.updateRole(selectedRole.id, formData as any);
+        toast("Success", "Role updated successfully", "success");
+      } else {
+        await rolesService.createRole(formData as any);
+        toast("Success", "Role created successfully", "success");
+      }
+      closeDrawer();
+      fetchData();
+    } catch (err: any) {
+      toast("Error", err.message || "Failed to save role", "error");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const togglePermission = (code: string) => {
+    setFormData(prev => {
+      const perms = prev.permissions || [];
+      if (perms.includes(code)) {
+        return { ...prev, permissions: perms.filter(p => p !== code) };
+      }
+      return { ...prev, permissions: [...perms, code] };
+    });
+  };
+
+  const toggleModulePermissions = (modulePerms: Permission[]) => {
+    setFormData(prev => {
+      const perms = prev.permissions || [];
+      const moduleCodes = modulePerms.map(p => p.code);
+      const allSelected = moduleCodes.every(code => perms.includes(code));
+      
+      if (allSelected) {
+        return { ...prev, permissions: perms.filter(p => !moduleCodes.includes(p)) };
+      } else {
+        const newPerms = new Set([...perms, ...moduleCodes]);
+        return { ...prev, permissions: Array.from(newPerms) };
+      }
+    });
   };
 
   const activeRolesCount = roles.filter(r => r.status === 'Active').length;
@@ -186,29 +250,22 @@ export const RolesWorkspace = () => {
         {/* Content Area */}
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col min-h-[500px]">
           {/* Tabs & Filters */}
-          <div className="px-6 py-4 border-b border-gray-100 flex flex-wrap items-center justify-between gap-4 bg-gray-50/50">
-            <div className="flex items-center gap-6">
-              <button 
-                onClick={() => setActiveTab('roles')}
-                className={`text-sm font-semibold pb-4 -mb-4 border-b-2 transition-colors ${activeTab === 'roles' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-900'}`}
-              >
-                Roles
-              </button>
-              <button 
-                onClick={() => setActiveTab('permissions')}
-                className={`text-sm font-semibold pb-4 -mb-4 border-b-2 transition-colors ${activeTab === 'permissions' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-900'}`}
-              >
-                Permission Catalog
-              </button>
-              <button 
-                onClick={() => setActiveTab('changes')}
-                className={`text-sm font-semibold pb-4 -mb-4 border-b-2 transition-colors ${activeTab === 'changes' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-900'}`}
-              >
-                Access Changes
-              </button>
+          <div className="px-6 border-b border-gray-100 flex flex-wrap items-center justify-between gap-4 bg-gray-50/50 pt-3">
+            <div className="flex items-center">
+              <Tabs
+                tabs={[
+                  { id: 'roles', label: 'Roles' },
+                  { id: 'permissions', label: 'Permission Catalog' },
+                  { id: 'changes', label: 'Access Changes' }
+                ]}
+                activeId={activeTab}
+                onChange={(id) => setActiveTab(id as any)}
+                className="border-none space-x-6"
+                tabClassName="pb-4"
+              />
             </div>
             
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 mb-2">
               <button className="px-3 py-1.5 border border-gray-200 rounded-lg text-xs font-semibold text-gray-600 hover:bg-gray-50 flex items-center gap-1.5">
                 Status <ChevronDown className="w-3 h-3" />
               </button>
@@ -268,7 +325,7 @@ export const RolesWorkspace = () => {
                         <span className="text-[13px] font-semibold text-gray-700 bg-gray-100 px-2.5 py-1 rounded-md">{role.assignedUsersCount}</span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-[13px] font-medium text-gray-600">{role.permissions.length}</span>
+                        <span className="text-[13px] font-medium text-gray-600">{(role.permissions || []).length}</span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className="text-[13px] font-medium text-gray-600">{role.scopeType}</span>
@@ -379,11 +436,11 @@ export const RolesWorkspace = () => {
                     <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2">Basic Information</h3>
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-1.5">Role Name *</label>
-                      <input type="text" defaultValue={selectedRole?.name} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. Supervisor" />
+                      <input type="text" value={formData.name || ''} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. Supervisor" />
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-1.5">Description</label>
-                      <textarea defaultValue={selectedRole?.description} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-20" placeholder="Briefly describe the role's purpose..."></textarea>
+                      <textarea value={formData.description || ''} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-20" placeholder="Briefly describe the role's purpose..."></textarea>
                     </div>
                   </div>
 
@@ -391,7 +448,7 @@ export const RolesWorkspace = () => {
                     <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2">Data Scope</h3>
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-1.5">Scope Level</label>
-                      <select defaultValue={selectedRole?.scopeType || 'Global'} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                      <select value={formData.scopeType || 'Global'} onChange={e => setFormData({...formData, scopeType: e.target.value as any})} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         <option value="Global">Global</option>
                         <option value="Organization">Organization</option>
                         <option value="Department">Department</option>
@@ -410,13 +467,13 @@ export const RolesWorkspace = () => {
                     {Object.entries(groupedPermissions).map(([module, perms]) => (
                       <div key={module} className="mb-4">
                         <label className="flex items-center gap-2 mb-2">
-                          <input type="checkbox" className="rounded text-blue-600 focus:ring-blue-500 w-4 h-4" defaultChecked={selectedRole?.permissions.some(pCode => perms.some(p => p.code === pCode))} />
+                          <input type="checkbox" className="rounded text-blue-600 focus:ring-blue-500 w-4 h-4" checked={perms.every(p => formData.permissions?.includes(p.code))} onChange={() => toggleModulePermissions(perms)} />
                           <span className="font-semibold text-gray-900 text-sm">{module}</span>
                         </label>
                         <div className="ml-6 space-y-2 border-l-2 border-gray-100 pl-4 py-1">
                           {perms.map(p => (
                             <label key={p.code} className="flex items-start gap-2">
-                              <input type="checkbox" className="rounded text-blue-600 focus:ring-blue-500 w-3.5 h-3.5 mt-0.5" defaultChecked={selectedRole?.permissions.includes(p.code)} />
+                              <input type="checkbox" className="rounded text-blue-600 focus:ring-blue-500 w-3.5 h-3.5 mt-0.5" checked={formData.permissions?.includes(p.code)} onChange={() => togglePermission(p.code)} />
                               <span className="text-sm text-gray-700">{p.name}</span>
                             </label>
                           ))}
@@ -438,7 +495,7 @@ export const RolesWorkspace = () => {
                       </div>
                       <div>
                         <p className="text-xs text-gray-500 mb-1">Permissions</p>
-                        <p className="font-semibold text-gray-900 text-lg">{selectedRole.permissions.length}</p>
+                        <p className="font-semibold text-gray-900 text-lg">{(selectedRole.permissions || []).length}</p>
                       </div>
                       <div>
                         <p className="text-xs text-gray-500 mb-1">Scope</p>
@@ -451,12 +508,12 @@ export const RolesWorkspace = () => {
                     <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2">Permissions Access</h3>
                     <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
                       {Object.entries(groupedPermissions)
-                        .filter(([_, perms]) => perms.some(p => selectedRole.permissions.includes(p.code)))
+                        .filter(([_, perms]) => perms.some(p => (selectedRole.permissions || []).includes(p.code)))
                         .map(([module, perms]) => (
                         <div key={module} className="border-b border-gray-100 last:border-0 p-4">
                           <h4 className="font-bold text-gray-900 text-sm mb-2">{module}</h4>
                           <div className="space-y-1.5 pl-2">
-                            {perms.filter(p => selectedRole.permissions.includes(p.code)).map(p => (
+                            {perms.filter(p => (selectedRole.permissions || []).includes(p.code)).map(p => (
                               <div key={p.code} className="flex items-center gap-2 text-sm text-gray-700">
                                 <CheckCircle className="w-3.5 h-3.5 text-green-500" />
                                 {p.name}
@@ -485,7 +542,10 @@ export const RolesWorkspace = () => {
               {isEditMode ? (
                 <>
                   <button onClick={closeDrawer} className="px-5 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</button>
-                  <button onClick={closeDrawer} className="px-5 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 shadow-sm">{selectedRole ? 'Save Changes' : 'Create Role'}</button>
+                  <button onClick={handleSave} disabled={saving} className="px-5 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 shadow-sm flex items-center gap-2">
+                    {saving && <Loader2 className="w-4 h-4 animate-spin" />}
+                    {selectedRole ? 'Save Changes' : 'Create Role'}
+                  </button>
                 </>
               ) : (
                 <>

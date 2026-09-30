@@ -2,17 +2,17 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { 
-  LayoutDashboard, 
-  Map, 
-  Clock, 
-  Users, 
-  Calendar, 
-  CheckCircle, 
-  CheckSquare, 
-  BarChart, 
-  Settings, 
-  MapPin, 
+import {
+  LayoutDashboard,
+  Map,
+  Clock,
+  Users,
+  Calendar,
+  CheckCircle,
+  CheckSquare,
+  BarChart,
+  Settings,
+  MapPin,
   ShieldAlert,
   Bell,
   Network,
@@ -93,7 +93,7 @@ export default function Sidebar() {
           GovTrack360
         </span>
       </div>
-      
+
       <div className="flex-1 overflow-y-auto py-4 custom-scrollbar">
         {NAV_ITEMS.map((group, i) => (
           <div key={i} className="mb-6">
@@ -103,28 +103,36 @@ export default function Sidebar() {
             <ul className="space-y-0.5">
               {group.items.map((item, j) => {
                 const Icon = item.icon;
-                const isActive = currentPath === item.href;
+                const isActive = currentPath === item.href || (item.href !== '/' && currentPath.startsWith(item.href));
                 return (
-                  <li key={j}>
-                    <Link 
+                  <li key={j} className="relative">
+                    <Link
                       href={item.href}
                       className={cn(
-                        "flex items-center justify-between px-6 py-2 text-sm transition-colors",
-                        isActive 
-                          ? "bg-blue-600/10 text-blue-400 border-r-2 border-blue-500" 
-                          : "hover:bg-slate-800 hover:text-slate-100"
+                        "flex items-center justify-between px-6 py-2.5 text-sm transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group",
+                        isActive
+                          ? "bg-blue-600/10 text-blue-400"
+                          : "text-slate-300 hover:bg-slate-800/80 hover:text-slate-100 hover:translate-x-1"
                       )}
                     >
                       <div className="flex items-center gap-3">
-                        <Icon className="w-4 h-4" />
+                        <Icon className={cn(
+                          "w-4 h-4 transition-colors duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                          isActive ? "text-blue-500" : "text-slate-500 group-hover:text-blue-400"
+                        )} />
                         {item.name}
                       </div>
                       {item.badge && (
-                        <span className="bg-blue-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
+                        <span className="bg-blue-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded transition-transform duration-300 group-hover:scale-105">
                           {item.badge}
                         </span>
                       )}
                     </Link>
+                    {/* Animated Indicator */}
+                    <div className={cn(
+                      "absolute right-0 top-1 bottom-1 w-[3px] rounded-l-full transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                      isActive ? "bg-blue-500 scale-y-100" : "bg-blue-500/0 scale-y-0 group-hover:bg-slate-600 group-hover:scale-y-50"
+                    )} />
                   </li>
                 );
               })}

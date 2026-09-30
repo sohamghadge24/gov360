@@ -5,7 +5,7 @@ import { VerificationFlow } from "@/components/verification/VerificationFlow";
 
 export default function MyDutyPage() {
   return (
-    <div className="flex flex-col h-full bg-gray-50 min-h-screen pb-10">
+    <div className="flex flex-col h-full bg-transparent min-h-screen pb-10">
       <div className="bg-white border-b px-6 py-4 flex items-center justify-between shadow-sm sticky top-0 z-10">
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">My Duty</h1>
