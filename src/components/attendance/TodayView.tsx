@@ -29,57 +29,61 @@ export const TodayView = ({ refreshKey }: { refreshKey: number }) => {
 
   if (loading) {
     return (
-      <div className="h-full flex flex-col items-center justify-center space-y-4">
-        <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
-        <p className="text-sm text-gray-500">Loading today's attendance session...</p>
+      <div className="h-[400px] flex flex-col items-center justify-center space-y-5">
+        <Loader2 className="w-8 h-8 text-[var(--color-primary)] animate-spin" />
+        <p className="text-[14px] text-[var(--color-neutral)] font-medium">Loading today's attendance session...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-6 bg-red-50 text-red-700 rounded-md border border-red-100">
-        <h3 className="font-semibold text-sm">Error Loading Session</h3>
-        <p className="text-sm mt-1">Unable to fetch today's active attendance session.</p>
+      <div className="glass-card bg-red-50/40 p-8 border-red-200/50">
+        <h3 className="font-display text-[22px] text-red-800 mb-2 font-medium">Error Loading Session</h3>
+        <p className="text-[14px] text-red-700/80">Unable to fetch today's active attendance session.</p>
       </div>
     );
   }
 
   if (!data) {
     return (
-      <div className="h-full flex flex-col items-center justify-center p-12 bg-white rounded-lg border border-gray-200">
-        <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-          <Calendar className="w-6 h-6 text-gray-400" />
+      <div className="h-[400px] flex flex-col items-center justify-center p-12 glass-card">
+        <div className="w-16 h-16 bg-white/60 shadow-[0_2px_8px_rgba(58,42,32,0.06)] rounded-full flex items-center justify-center mb-6 border border-white">
+          <Calendar className="w-7 h-7 text-[var(--color-muted)]" />
         </div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-1">No Active Session</h3>
-        <p className="text-sm text-gray-500 max-w-sm text-center">
-          You do not have an active attendance session for today. Use a designated kiosk or your mobile app to check in.
+        <h3 className="text-[24px] font-display text-[var(--color-deep-navy)] mb-3 text-center tracking-tight">No Active Session</h3>
+        <p className="text-[14px] text-[var(--color-neutral)] max-w-sm text-center leading-relaxed mb-8">
+          Attendance data will appear here once you check in at a designated kiosk or mobile app today.
         </p>
+        <button className="btn-primary group">
+          Check In
+          <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">Current Attendance</h2>
+    <div className="glass-card p-8">
+      <h2 className="text-[20px] font-display text-[var(--color-deep-navy)] mb-6">Current Attendance</h2>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-        <div>
-          <span className="text-sm text-gray-500 block mb-1">Status</span>
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+        <div className="p-5 bg-white/40 rounded-[14px] border border-white/50 shadow-sm">
+          <span className="text-[11px] font-bold tracking-[0.12em] text-[var(--color-neutral)] uppercase block mb-3">Status</span>
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold tracking-wide bg-green-100/80 text-green-800 shadow-sm border border-green-200/50">
             {data.status}
           </span>
         </div>
-        <div>
-          <span className="text-sm text-gray-500 block mb-1">Check-in</span>
-          <span className="text-sm font-medium text-gray-900">{data.check_in_time || '—'}</span>
+        <div className="p-5 bg-white/40 rounded-[14px] border border-white/50 shadow-sm">
+          <span className="text-[11px] font-bold tracking-[0.12em] text-[var(--color-neutral)] uppercase block mb-3">Check-in</span>
+          <span className="text-[18px] font-medium text-[var(--color-deep-navy)] tracking-tight">{data.check_in_time || '—'}</span>
         </div>
-        <div>
-          <span className="text-sm text-gray-500 block mb-1">Check-out</span>
-          <span className="text-sm font-medium text-gray-900">{data.check_out_time || '—'}</span>
+        <div className="p-5 bg-white/40 rounded-[14px] border border-white/50 shadow-sm">
+          <span className="text-[11px] font-bold tracking-[0.12em] text-[var(--color-neutral)] uppercase block mb-3">Check-out</span>
+          <span className="text-[18px] font-medium text-[var(--color-deep-navy)] tracking-tight">{data.check_out_time || '—'}</span>
         </div>
-        <div>
-          <span className="text-sm text-gray-500 block mb-1">Session ID</span>
-          <span className="text-sm font-mono text-gray-900">{data.id}</span>
+        <div className="p-5 bg-white/40 rounded-[14px] border border-white/50 shadow-sm">
+          <span className="text-[11px] font-bold tracking-[0.12em] text-[var(--color-neutral)] uppercase block mb-3">Session ID</span>
+          <span className="text-[14px] font-mono font-medium text-[var(--color-muted)]">{data.id}</span>
         </div>
       </div>
     </div>

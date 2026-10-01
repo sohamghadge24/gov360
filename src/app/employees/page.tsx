@@ -22,7 +22,7 @@ export default function EmployeesPage() {
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  
+
   // Data State
   const [data, setData] = useState<Employee[]>([]);
   const [total, setTotal] = useState(0);
@@ -53,95 +53,100 @@ export default function EmployeesPage() {
       .finally(() => {
         if (mounted) setLoading(false);
       });
-      
+
     return () => { mounted = false; };
   }, [activeCategory, debouncedSearch, page]);
 
   return (
-    <div className="flex flex-col h-full bg-transparent min-h-screen">
+    <div className="flex flex-col h-full bg-transparent min-h-screen relative">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-8 py-6 flex flex-col gap-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)] sticky top-0 z-10">
-        <div className="flex items-center justify-between">
+      <div className="px-10 pt-8 pb-4 relative z-10 shrink-0">
+        <div className="max-w-[1600px] mx-auto flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
-            <h1 className="text-[26px] leading-tight font-black text-gray-900 tracking-tight">Employees</h1>
-            <p className="text-[14px] text-gray-500 mt-1">Manage employees, assignments, supervisors, verification policies and workforce status.</p>
+            <div className="text-[11px] font-display font-semibold tracking-[0.15em] text-[var(--color-muted)] uppercase mb-3">WORKFORCE</div>
+            <h1 className="font-display text-[42px] md:text-[46px] font-light leading-[1.1] text-[var(--color-deep-navy)] tracking-[-0.035em]">EMPLOYEES</h1>
+            <p className="text-[15px] text-[var(--color-neutral)] mt-4 max-w-sm leading-relaxed">
+              Manage employees, assignments, supervisors, verification policies and workforce status.
+            </p>
           </div>
-          <div className="flex items-center gap-3">
-            <button className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-[13px] font-semibold text-gray-700 bg-white hover:bg-blue-50/50 hover:text-blue-700 hover:border-blue-300 shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 active:scale-95">
+          <div className="flex items-center gap-3 mt-4 md:mt-0">
+            <button className="flex items-center gap-2 px-5 py-2.5 bg-white border border-[var(--color-border)] text-[var(--color-deep-navy)] rounded-[14px] text-[13px] font-bold shadow-sm hover:bg-gray-50 active:scale-[0.98] transition-all duration-200 ease-out">
               <Upload className="w-4 h-4" />
               Import
             </button>
-            <button 
+            <button
               onClick={() => setIsAddModalOpen(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-[13px] font-semibold hover:bg-blue-700 shadow-sm hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 active:scale-95"
+              className="flex items-center gap-2 px-5 py-2.5 bg-[var(--color-primary)] text-white rounded-[14px] text-[13px] font-bold shadow-md hover:bg-blue-700 active:scale-[0.98] transition-all duration-200 ease-out"
             >
               <Plus className="w-4 h-4" />
               Add Employee
             </button>
           </div>
         </div>
+      </div>
 
-        {/* Toolbar */}
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="relative w-full max-w-md group">
-            <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 group-focus-within:text-blue-500 transition-colors" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search employees..."
-              className="w-full pl-9 pr-4 py-2 bg-gray-50/50 border border-gray-200 rounded-lg text-[13px] text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white transition-all shadow-sm"
+      <div className="px-10 shrink-0">
+        <div className="max-w-[1600px] mx-auto pt-2 pb-0">
+          <div className="flex flex-wrap items-center gap-4 mb-6">
+            <div className="relative w-full max-w-md group">
+              <Search className="w-4 h-4 text-[var(--color-muted)] absolute left-3 top-1/2 -translate-y-1/2 group-focus-within:text-[var(--color-primary)] transition-colors" />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search employees..."
+                className="w-full pl-9 pr-4 py-2 bg-white/40 border border-[var(--color-border)] rounded-[12px] text-[13px] text-[var(--color-deep-navy)] placeholder:text-[var(--color-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/20 focus:bg-white transition-all shadow-[0_2px_8px_rgba(0,0,0,0.02)]"
+              />
+            </div>
+            <select className="bg-white/40 border border-[var(--color-border)] text-[var(--color-deep-navy)] rounded-[12px] text-[13px] font-medium px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/20 hover:bg-white transition-all shadow-[0_2px_8px_rgba(0,0,0,0.02)] cursor-pointer">
+              <option value="">Department</option>
+            </select>
+            <select className="bg-white/40 border border-[var(--color-border)] text-[var(--color-deep-navy)] rounded-[12px] text-[13px] font-medium px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/20 hover:bg-white transition-all shadow-[0_2px_8px_rgba(0,0,0,0.02)] cursor-pointer">
+              <option value="">Unit</option>
+            </select>
+            <select className="bg-white/40 border border-[var(--color-border)] text-[var(--color-deep-navy)] rounded-[12px] text-[13px] font-medium px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/20 hover:bg-white transition-all shadow-[0_2px_8px_rgba(0,0,0,0.02)] cursor-pointer">
+              <option value="">Status</option>
+            </select>
+          </div>
+
+          <div className="border-b border-[var(--color-border)]/50">
+            <Tabs
+              tabs={categories}
+              activeId={activeCategory}
+              onChange={(id) => {
+                setActiveCategory(id);
+                setPage(1);
+              }}
+              variant="line"
             />
           </div>
-          <select className="border border-gray-200 text-gray-700 rounded-lg text-[13px] font-medium px-3 py-2 bg-white hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm cursor-pointer">
-            <option value="">Department</option>
-          </select>
-          <select className="border border-gray-200 text-gray-700 rounded-lg text-[13px] font-medium px-3 py-2 bg-white hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm cursor-pointer">
-            <option value="">Unit</option>
-          </select>
-          <select className="border border-gray-200 text-gray-700 rounded-lg text-[13px] font-medium px-3 py-2 bg-white hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm cursor-pointer">
-            <option value="">Status</option>
-          </select>
-        </div>
-
-        {/* Category Navigation */}
-        <div className="mt-2">
-          <Tabs
-            tabs={categories}
-            activeId={activeCategory}
-            onChange={(id) => {
-              setActiveCategory(id);
-              setPage(1);
-            }}
-            tabClassName="px-1"
-          />
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-6 overflow-hidden flex flex-col">
-        <div className="bg-white border border-gray-200 rounded-lg shadow-sm flex-1 flex flex-col overflow-hidden">
-          <EmployeeTable 
-            data={data} 
-            loading={loading} 
-            error={error} 
-            category={activeCategory} 
+      <div className="flex-1 overflow-auto px-10 pb-10 pt-6 max-w-[1600px] mx-auto w-full relative z-10">
+        <div className="glass-card h-full overflow-hidden flex flex-col min-h-[500px]">
+          <EmployeeTable
+            data={data}
+            loading={loading}
+            error={error}
+            category={activeCategory}
           />
           {/* Pagination Controls could go here */}
           {!loading && !error && data.length > 0 && (
-            <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 text-sm text-gray-500 flex justify-between items-center">
-              <span>Showing {data.length} of {total} employees</span>
+            <div className="px-6 py-4 border-t border-[var(--color-border)]/50 bg-white/40 text-[13px] text-[var(--color-neutral)] flex justify-between items-center shrink-0">
+              <span className="font-medium">Showing {data.length} of {total} employees</span>
               <div className="flex items-center gap-2">
-                <button 
+                <button
                   disabled={page === 1}
                   onClick={() => setPage(p => p - 1)}
-                  className="px-3 py-1 border rounded bg-white hover:bg-gray-50 disabled:opacity-50"
+                  className="px-3 py-1 border border-[var(--color-border)] rounded-[8px] bg-white hover:bg-gray-50 disabled:opacity-50 transition-colors"
                 >
                   Previous
                 </button>
-                <button 
+                <button
                   onClick={() => setPage(p => p + 1)}
-                  className="px-3 py-1 border rounded bg-white hover:bg-gray-50"
+                  className="px-3 py-1 border border-[var(--color-border)] rounded-[8px] bg-white hover:bg-gray-50 transition-colors"
                 >
                   Next
                 </button>
@@ -150,16 +155,16 @@ export default function EmployeesPage() {
           )}
         </div>
       </div>
-      
+
       {isAddModalOpen && (
-        <AddEmployeeModal 
-          onClose={() => setIsAddModalOpen(false)} 
+        <AddEmployeeModal
+          onClose={() => setIsAddModalOpen(false)}
           onSuccess={() => {
             setIsAddModalOpen(false);
             setPage(1); // Refresh data
             // To truly refresh we can trigger a refreshKey or just reload
-            window.location.reload(); 
-          }} 
+            window.location.reload();
+          }}
         />
       )}
     </div>

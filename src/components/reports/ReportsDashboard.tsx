@@ -39,33 +39,33 @@ export const ReportsDashboard = () => {
   ];
 
   return (
-    <div className="flex flex-col h-full bg-[#F7F8FA] min-h-screen pb-10">
-      <div className="bg-white border-b px-8 py-5 flex flex-col md:flex-row md:items-center justify-between shadow-sm sticky top-0 z-10 gap-4">
-        <div>
-          <nav className="text-[13px] font-medium text-gray-500 mb-1 flex items-center gap-2">
-            <span className="hover:text-gray-900 cursor-pointer">Insights</span>
-            <span>/</span>
-            <span className="text-gray-900 font-semibold">Reports & Analytics</span>
-          </nav>
-          <h1 className="text-[28px] leading-tight font-bold text-gray-900 mt-1">Reports & Analytics</h1>
-          <p className="text-sm text-gray-500 mt-1">Operational reporting and workforce intelligence.</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <button
-            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 shadow-sm"
-          >
-            <Calendar className="w-4 h-4 text-gray-500" /> Schedule Report
-          </button>
-          <button
-            onClick={() => setExportOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 shadow-sm"
-          >
-            <Download className="w-4 h-4" /> Export
-          </button>
+    <div className="flex flex-col h-full bg-transparent min-h-screen pb-10">
+      <div className="px-10 pt-10 pb-6 relative z-10">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <div className="text-[11px] font-display font-semibold tracking-[0.15em] text-[var(--color-muted)] uppercase mb-3">INSIGHTS</div>
+            <h1 className="font-display text-[42px] md:text-[46px] font-light leading-[1.1] text-[var(--color-deep-navy)] tracking-[-0.035em] font-light">REPORTS & ANALYTICS</h1>
+            <p className="text-[15px] text-[var(--color-neutral)] mt-4 max-w-sm leading-relaxed">
+              Operational reporting and workforce intelligence.
+            </p>
+          </div>
+          <div className="flex items-center gap-3 mt-4 md:mt-0">
+            <button
+              className="flex items-center gap-2 px-4 py-2 bg-white/40 border border-white rounded-[14px] shadow-sm text-[13px] font-medium text-[var(--color-deep-navy)] backdrop-blur-md hover:bg-white/60 transition-colors"
+            >
+              <Calendar className="w-4 h-4 text-[var(--color-muted)]" /> Schedule Report
+            </button>
+            <button
+              onClick={() => setExportOpen(true)}
+              className="btn-primary"
+            >
+              <Download className="w-4 h-4" /> Export
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="p-8 max-w-[1440px] mx-auto w-full space-y-6">
+      <div className="px-10 pb-10 max-w-7xl mx-auto w-full space-y-6 relative z-10">
 
         {/* GLOBAL FILTERS */}
         <ReportFilterBar
@@ -91,42 +91,52 @@ export const ReportsDashboard = () => {
             {/* KPI SUMMARY */}
             {dashboardData && (
               <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between">
-                  <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Attendance</p>
-                  <h3 className="text-2xl font-bold text-gray-900">
-                    {dashboardData.attendanceTrend.length > 0 ?
-                      Math.round((dashboardData.attendanceTrend.reduce((acc, curr) => acc + curr.present, 0) /
-                        dashboardData.attendanceTrend.reduce((acc, curr) => acc + curr.present + curr.absent, 0)) * 100) || 0 : 0}%
-                  </h3>
-                  <p className="text-xs font-medium text-green-600 mt-2 flex items-center gap-1">↗ vs last period</p>
+                <div className="glass-card p-6 flex flex-col justify-between">
+                  <p className="text-[11px] font-bold text-[var(--color-neutral)] uppercase tracking-[0.12em] mb-4">Attendance</p>
+                  <div>
+                    <h3 className="font-display text-[36px] tracking-tight leading-[1] text-[var(--color-deep-navy)] mb-2 font-light">
+                      {dashboardData.attendanceTrend.length > 0 ?
+                        Math.round((dashboardData.attendanceTrend.reduce((acc, curr) => acc + curr.present, 0) /
+                          dashboardData.attendanceTrend.reduce((acc, curr) => acc + curr.present + curr.absent, 0)) * 100) || 0 : 0}%
+                    </h3>
+                    <p className="text-[12px] font-medium text-green-600 flex items-center gap-1">↗ vs last period</p>
+                  </div>
                 </div>
-                <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between">
-                  <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Verification</p>
-                  <h3 className="text-2xl font-bold text-blue-600">
-                    {dashboardData.complianceTrend.length > 0 ? dashboardData.complianceTrend[dashboardData.complianceTrend.length - 1].compliance : 0}%
-                  </h3>
-                  <p className="text-xs font-medium text-green-600 mt-2 flex items-center gap-1">↗ compliance</p>
+                <div className="glass-card p-6 flex flex-col justify-between">
+                  <p className="text-[11px] font-bold text-[var(--color-neutral)] uppercase tracking-[0.12em] mb-4">Verification</p>
+                  <div>
+                    <h3 className="font-display text-[36px] tracking-tight leading-[1] text-[var(--color-primary)] mb-2 font-light">
+                      {dashboardData.complianceTrend.length > 0 ? dashboardData.complianceTrend[dashboardData.complianceTrend.length - 1].compliance : 0}%
+                    </h3>
+                    <p className="text-[12px] font-medium text-green-600 flex items-center gap-1">↗ compliance</p>
+                  </div>
                 </div>
-                <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between">
-                  <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Exceptions</p>
-                  <h3 className="text-2xl font-bold text-red-600">
-                    {dashboardData.exceptionTrend.reduce((acc, curr) => acc + curr.exceptions, 0)}
-                  </h3>
-                  <p className="text-xs font-medium text-gray-500 mt-2 flex items-center gap-1">Total pending</p>
+                <div className="glass-card p-6 flex flex-col justify-between">
+                  <p className="text-[11px] font-bold text-[var(--color-neutral)] uppercase tracking-[0.12em] mb-4">Exceptions</p>
+                  <div>
+                    <h3 className="font-display text-[36px] tracking-tight leading-[1] text-red-600 mb-2 font-light">
+                      {dashboardData.exceptionTrend.reduce((acc, curr) => acc + curr.exceptions, 0)}
+                    </h3>
+                    <p className="text-[12px] font-medium text-[var(--color-muted)] flex items-center gap-1">Total pending</p>
+                  </div>
                 </div>
-                <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between">
-                  <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Field Duty</p>
-                  <h3 className="text-2xl font-bold text-gray-900">
-                    {dashboardData.fieldDutyCompletion.length > 0 ? dashboardData.fieldDutyCompletion[dashboardData.fieldDutyCompletion.length - 1].completion : 0}%
-                  </h3>
-                  <p className="text-xs font-medium text-gray-500 mt-2 flex items-center gap-1">Completion rate</p>
+                <div className="glass-card p-6 flex flex-col justify-between">
+                  <p className="text-[11px] font-bold text-[var(--color-neutral)] uppercase tracking-[0.12em] mb-4">Field Duty</p>
+                  <div>
+                    <h3 className="font-display text-[36px] tracking-tight leading-[1] text-[var(--color-deep-navy)] mb-2 font-light">
+                      {dashboardData.fieldDutyCompletion.length > 0 ? dashboardData.fieldDutyCompletion[dashboardData.fieldDutyCompletion.length - 1].completion : 0}%
+                    </h3>
+                    <p className="text-[12px] font-medium text-[var(--color-muted)] flex items-center gap-1">Completion rate</p>
+                  </div>
                 </div>
-                <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between">
-                  <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Missed Verify</p>
-                  <h3 className="text-2xl font-bold text-amber-600">
-                    12
-                  </h3>
-                  <p className="text-xs font-medium text-gray-500 mt-2 flex items-center gap-1">Requires review</p>
+                <div className="glass-card p-6 flex flex-col justify-between">
+                  <p className="text-[11px] font-bold text-[var(--color-neutral)] uppercase tracking-[0.12em] mb-4">Missed Verify</p>
+                  <div>
+                    <h3 className="font-display text-[36px] tracking-tight leading-[1] text-amber-600 mb-2 font-light">
+                      12
+                    </h3>
+                    <p className="text-[12px] font-medium text-[var(--color-muted)] flex items-center gap-1">Requires review</p>
+                  </div>
                 </div>
               </div>
             )}
@@ -134,40 +144,40 @@ export const ReportsDashboard = () => {
             {/* MAIN ANALYTICS */}
             {dashboardData && activeTab === 'overview' && (
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <div className="lg:col-span-8 bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col">
-                  <h2 className="text-[14px] font-bold text-gray-900 mb-6">Attendance Trend</h2>
+                <div className="lg:col-span-8 glass-card p-8 flex flex-col">
+                  <h2 className="text-[12px] font-bold text-[var(--color-neutral)] uppercase tracking-[0.12em] mb-6">Attendance Trend</h2>
                   <div className="flex-1 min-h-[250px]">
                     {dashboardData.attendanceTrend.length > 0 ? (
                       <ResponsiveContainer width="100%" height="100%">
                         <RechartsBarChart data={dashboardData.attendanceTrend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-                          <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280' }} dy={10} />
-                          <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280' }} />
-                          <Tooltip cursor={{ fill: '#F3F4F6' }} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                          <Bar dataKey="present" name="Present" fill="#2563EB" radius={[4, 4, 0, 0]} maxBarSize={40} />
-                          <Bar dataKey="absent" name="Absent" fill="#F87171" radius={[4, 4, 0, 0]} maxBarSize={40} />
+                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
+                          <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#8A7B70', fontWeight: 600 }} dy={10} />
+                          <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#8A7B70', fontWeight: 600 }} />
+                          <Tooltip cursor={{ fill: 'rgba(0,0,0,0.02)' }} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 20px -2px rgba(0,0,0,0.1)' }} />
+                          <Bar dataKey="present" name="Present" fill="#2563EB" radius={[4, 4, 0, 0]} maxBarSize={32} />
+                          <Bar dataKey="absent" name="Absent" fill="#EF4444" radius={[4, 4, 0, 0]} maxBarSize={32} />
                         </RechartsBarChart>
                       </ResponsiveContainer>
                     ) : (
-                      <div className="h-full flex items-center justify-center text-gray-400 text-sm">No trend data available</div>
+                      <div className="h-full flex items-center justify-center text-[var(--color-muted)] text-[14px]">No trend data available</div>
                     )}
                   </div>
                 </div>
-                <div className="lg:col-span-4 bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col">
-                  <h2 className="text-[14px] font-bold text-gray-900 mb-6">Verification Compliance</h2>
+                <div className="lg:col-span-4 glass-card p-8 flex flex-col">
+                  <h2 className="text-[12px] font-bold text-[var(--color-neutral)] uppercase tracking-[0.12em] mb-6">Verification Compliance</h2>
                   <div className="flex-1 min-h-[250px]">
                     {dashboardData.complianceTrend.length > 0 ? (
                       <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={dashboardData.complianceTrend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-                          <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280' }} dy={10} />
-                          <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280' }} domain={[0, 100]} />
-                          <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                          <Line type="monotone" dataKey="compliance" name="Compliance %" stroke="#10B981" strokeWidth={3} dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 6 }} />
+                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
+                          <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#8A7B70', fontWeight: 600 }} dy={10} />
+                          <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#8A7B70', fontWeight: 600 }} domain={[0, 100]} />
+                          <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 20px -2px rgba(0,0,0,0.1)' }} />
+                          <Line type="monotone" dataKey="compliance" name="Compliance %" stroke="#10B981" strokeWidth={3} dot={{ r: 4, strokeWidth: 2, stroke: '#fff', fill: '#10B981' }} activeDot={{ r: 6 }} />
                         </LineChart>
                       </ResponsiveContainer>
                     ) : (
-                      <div className="h-full flex items-center justify-center text-gray-400 text-sm">No compliance data available</div>
+                      <div className="h-full flex items-center justify-center text-[var(--color-muted)] text-[14px]">No compliance data available</div>
                     )}
                   </div>
                 </div>
@@ -187,30 +197,30 @@ export const ReportsDashboard = () => {
             {/* TAB CONTENT */}
             <div className="min-h-[400px]">
               {activeTab === 'overview' && (
-                <div className="bg-white p-12 rounded-xl border border-gray-200 shadow-sm flex flex-col items-center justify-center text-center">
-                  <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mb-4 text-blue-600">
-                    <BarChart className="w-6 h-6" />
+                <div className="glass-card p-12 flex flex-col items-center justify-center text-center">
+                  <div className="w-16 h-16 rounded-full bg-white/60 shadow-sm flex items-center justify-center mb-6 border border-white">
+                    <BarChart className="w-7 h-7 text-[var(--color-primary)]" />
                   </div>
-                  <h2 className="text-[15px] font-bold text-gray-900">Overview Dashboard</h2>
-                  <p className="text-sm text-gray-500 mt-2 max-w-md">Select a specific report tab above to view detailed records and tables for Attendance, Verification, or Exceptions.</p>
+                  <h2 className="font-display text-[26px] text-[var(--color-deep-navy)] mb-2 font-medium">Overview Dashboard</h2>
+                  <p className="text-[14px] text-[var(--color-neutral)] max-w-md leading-relaxed">Select a specific report tab above to view detailed records and tables for Attendance, Verification, or Exceptions.</p>
                 </div>
               )}
               {activeTab === 'attendance' && <DailyAttendanceReportView filters={filters} />}
               {activeTab === 'verification' && <VerificationComplianceReportView filters={filters} />}
               {['exceptions', 'field-duty', 'employees'].includes(activeTab) && (
-                <div className="bg-white p-12 rounded-xl border border-gray-200 shadow-sm flex flex-col items-center justify-center text-center h-[400px]">
-                  <div className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center mb-4 text-gray-400">
-                    <FileText className="w-6 h-6" />
+                <div className="glass-card p-12 flex flex-col items-center justify-center text-center h-[400px]">
+                  <div className="w-16 h-16 rounded-full bg-white/60 shadow-sm flex items-center justify-center mb-6 border border-white">
+                    <FileText className="w-7 h-7 text-[var(--color-muted)]" />
                   </div>
-                  <h2 className="text-[15px] font-bold text-gray-900">{tabs.find(t => t.id === activeTab)?.label} Report</h2>
-                  <p className="text-sm text-gray-500 mt-2">No report data available for the selected filters.</p>
+                  <h2 className="font-display text-[26px] text-[var(--color-deep-navy)] mb-2 font-medium">{tabs.find(t => t.id === activeTab)?.label} Report</h2>
+                  <p className="text-[14px] text-[var(--color-neutral)] max-w-md leading-relaxed">No report data available for the selected filters.</p>
                 </div>
               )}
             </div>
 
             {/* EXPLORE REPORTS (Compact) */}
             <div className="pt-8">
-              <h3 className="text-[13px] font-bold text-gray-900 mb-4 uppercase tracking-wider">Explore Reports</h3>
+              <h3 className="text-[11px] font-display font-semibold text-[var(--color-neutral)] uppercase tracking-[0.15em] mb-4">Explore Reports</h3>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 {[
                   { id: 'attendance', title: 'Attendance', icon: Clock },
@@ -228,10 +238,10 @@ export const ReportsDashboard = () => {
                         window.scrollTo({ top: 400, behavior: 'smooth' });
                       }
                     }}
-                    className="flex items-center gap-3 p-3 bg-white border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all rounded-lg text-left"
+                    className="glass-card flex items-center gap-3 p-4 hover:bg-white/60 transition-colors duration-[400ms] text-left group"
                   >
-                    <div className="text-gray-400"><report.icon className="w-4 h-4" /></div>
-                    <span className="text-[13px] font-semibold text-gray-700">{report.title}</span>
+                    <div className="text-[var(--color-muted)] group-hover:text-[var(--color-primary)] transition-colors"><report.icon className="w-4 h-4" /></div>
+                    <span className="text-[13px] font-bold text-[var(--color-deep-navy)]">{report.title}</span>
                   </button>
                 ))}
               </div>

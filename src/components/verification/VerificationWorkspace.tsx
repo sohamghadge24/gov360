@@ -118,33 +118,33 @@ export const VerificationWorkspace = () => {
   const pendingSlots = slots.filter(s => s.status === 'Pending' || s.status === 'Due' || s.status === 'In progress');
 
   return (
-    <div className="flex flex-col h-full bg-[#F7F8FA] min-h-screen">
-      <div className="bg-white border-b px-8 py-6 flex items-start justify-between shadow-sm sticky top-0 z-10 shrink-0">
-        <div>
-          <nav className="text-[13px] font-medium text-gray-500 mb-1 flex items-center gap-2">
-            <span className="hover:text-gray-900 cursor-pointer">Duty Operations</span>
-            <span>/</span>
-            <span className="text-gray-900 font-semibold">Verification</span>
-          </nav>
-          <h1 className="text-[28px] leading-tight font-bold text-gray-900 mt-1 mb-1">Verification</h1>
-          <p className="text-sm text-gray-500">Complete scheduled verification for the current duty assignment.</p>
-        </div>
-        <div className="flex items-center gap-4 mt-4 md:mt-0">
-          <div className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm text-sm font-medium text-gray-700">
-            <span>Today, {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+    <div className="flex flex-col h-full bg-transparent min-h-screen">
+      <div className="px-10 pt-10 pb-6 relative z-10">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <div className="text-[11px] font-display font-semibold tracking-[0.15em] text-[var(--color-muted)] uppercase mb-3">DUTY OPERATIONS</div>
+            <h1 className="font-display text-[42px] md:text-[46px] font-light leading-[1.1] text-[var(--color-deep-navy)] tracking-[-0.035em] font-light">VERIFICATION</h1>
+            <p className="text-[15px] text-[var(--color-neutral)] mt-4 max-w-sm leading-relaxed">
+              Complete scheduled verification for the current duty assignment.
+            </p>
+          </div>
+          <div className="flex items-center gap-4 mt-4 md:mt-0">
+            <div className="flex items-center gap-2 px-4 py-2 bg-white/40 border border-white rounded-[14px] shadow-sm text-[13px] font-medium text-[var(--color-deep-navy)] backdrop-blur-md">
+              <span>Today, {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="p-8 max-w-[1440px] mx-auto w-full space-y-6">
+      <div className="px-10 pb-10 max-w-7xl mx-auto w-full space-y-6 relative z-10">
         
         {/* TOP ROW: CURRENT VERIFICATION & TIMELINE */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
           {/* CURRENT VERIFICATION */}
           <div className="lg:col-span-8 flex flex-col">
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm flex-1 p-6 relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-1 h-full bg-blue-600 hidden md:block" />
+            <div className="glass-card flex-1 p-8 relative overflow-hidden h-[360px]">
+              <div className="absolute -left-10 -top-10 w-40 h-40 bg-gradient-to-br from-blue-500/10 to-transparent opacity-60 mix-blend-multiply rounded-full blur-3xl pointer-events-none" />
               
               {flowState === 'LOADING_SLOT' ? (
                 <div className="animate-pulse space-y-4">
@@ -153,18 +153,18 @@ export const VerificationWorkspace = () => {
                   <div className="h-4 w-64 bg-gray-200 rounded"></div>
                 </div>
               ) : flowState === 'IDLE' ? (
-                <div className="flex flex-col items-center justify-center text-center h-full py-6">
-                  <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center mb-3">
-                    <CheckCircle className="w-6 h-6 text-green-500" />
+                <div className="flex flex-col items-center justify-center text-center h-full py-6 relative z-10">
+                  <div className="w-16 h-16 rounded-full bg-white/60 flex items-center justify-center mb-4 border border-white shadow-sm">
+                    <CheckCircle className="w-8 h-8 text-green-500" />
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-1">You're all caught up</h3>
-                  <p className="text-sm text-gray-500 mb-4">No active verification available.</p>
-                  <button onClick={fetchDashboard} className="text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1">
-                    <RefreshCw className="w-4 h-4" /> Refresh
+                  <h3 className="font-display text-[26px] text-[var(--color-deep-navy)] mb-2 font-medium">You're all caught up</h3>
+                  <p className="text-[14px] text-[var(--color-neutral)] mb-6 max-w-[280px]">No active verification required at this time.</p>
+                  <button onClick={fetchDashboard} className="btn-secondary group">
+                    <RefreshCw className="w-4 h-4 text-[var(--color-muted)] group-hover:text-[var(--color-primary)] transition-colors" /> Refresh
                   </button>
                 </div>
               ) : slot ? (
-                <div className="flex flex-col h-full md:pl-2">
+                <div className="flex flex-col h-full relative z-10">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider">Current Verification</h3>
                     <div className="flex items-center gap-1.5 text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded">
@@ -191,7 +191,7 @@ export const VerificationWorkspace = () => {
                     
                     <button 
                       onClick={handleStart}
-                      className="px-6 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm flex items-center justify-center gap-2"
+                      className="btn-primary"
                     >
                       Start Verification <ArrowRight className="w-4 h-4" />
                     </button>
@@ -203,8 +203,8 @@ export const VerificationWorkspace = () => {
           
           {/* TODAY'S PLAN */}
           <div className="lg:col-span-4 flex flex-col">
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm flex-1 p-6 flex flex-col">
-              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-6">Today's Plan</h3>
+            <div className="glass-card flex-1 p-8 flex flex-col h-[360px]">
+              <h3 className="text-[11px] font-bold text-[var(--color-neutral)] uppercase tracking-[0.12em] mb-6">Today's Plan</h3>
               
               <div className="relative border-l-[3px] border-gray-100 ml-3 space-y-6 flex-1 overflow-y-auto max-h-[220px]">
                 {slots.length === 0 ? (
@@ -256,8 +256,8 @@ export const VerificationWorkspace = () => {
 
         {/* EVIDENCE TRACKER (IF SLOT IS ACTIVE) */}
         {slot && (
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-            <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Verification Evidence</h3>
+          <div className="glass-card p-8">
+            <h3 className="text-[11px] font-bold text-[var(--color-neutral)] uppercase tracking-[0.12em] mb-6">Verification Evidence</h3>
             <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
               {['GPS', 'Selfie', 'QR', 'NFC'].map(type => {
                 const isRequired = slot.requiredEvidence.includes(type as any);
@@ -286,9 +286,9 @@ export const VerificationWorkspace = () => {
         )}
 
         {/* VERIFICATION HISTORY */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
-            <h3 className="text-sm font-bold text-gray-900">Verification History</h3>
+        <div className="glass-card overflow-hidden">
+          <div className="px-8 py-5 border-b border-[var(--color-border)] flex items-center justify-between">
+            <h3 className="font-display text-[22px] text-[var(--color-deep-navy)] font-medium">Verification History</h3>
             <div className="flex items-center gap-3 text-xs font-medium text-gray-500">
               <span className="flex items-center gap-1 cursor-pointer hover:text-gray-900">Status <ChevronDown className="w-3 h-3" /></span>
               <span className="flex items-center gap-1 cursor-pointer hover:text-gray-900">Method <ChevronDown className="w-3 h-3" /></span>

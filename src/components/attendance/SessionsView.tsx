@@ -47,74 +47,80 @@ export const SessionsView = ({ refreshKey }: { refreshKey: number }) => {
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col h-full overflow-hidden">
+    <div className="glass-card flex flex-col h-full overflow-hidden">
       {/* Sessions Toolbar */}
-      <div className="p-4 border-b border-gray-200 flex items-center justify-between bg-gray-50/50">
-        <div className="relative w-72">
-          <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+      <div className="px-6 py-5 border-b border-[var(--color-border)] flex items-center justify-between bg-white/40">
+        <div className="relative w-80">
+          <Search className="w-4 h-4 text-[var(--color-muted)] absolute left-4 top-1/2 -translate-y-1/2" />
           <input 
             type="text" 
             placeholder="Search employee or session ID..." 
-            className="w-full pl-9 pr-4 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full pl-11 pr-4 py-2.5 text-[14px] bg-white/60 border border-[var(--color-border)] rounded-full focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all placeholder:text-[var(--color-muted)] text-[var(--color-deep-navy)]"
           />
         </div>
-        <button className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors shadow-sm">
-          <Filter className="w-4 h-4" />
+        <button className="btn-secondary group">
+          <Filter className="w-4 h-4 text-[var(--color-muted)] group-hover:text-[var(--color-primary)] transition-colors" />
           More Filters
         </button>
       </div>
 
-      <div className="overflow-auto flex-1">
+      <div className="overflow-auto flex-1 bg-white/20">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider border-b border-gray-200">
-              <th className="px-6 py-3 font-medium">Employee</th>
-              <th className="px-6 py-3 font-medium">Session ID</th>
-              <th className="px-6 py-3 font-medium">Check-in</th>
-              <th className="px-6 py-3 font-medium">Check-out</th>
-              <th className="px-6 py-3 font-medium">Duration</th>
-              <th className="px-6 py-3 font-medium">Status</th>
-              <th className="px-6 py-3 font-medium">Source</th>
-              <th className="px-6 py-3 font-medium text-right">Actions</th>
+            <tr className="bg-white/40 text-[var(--color-neutral)] text-[11px] font-bold uppercase tracking-[0.12em] border-b border-[var(--color-border)]">
+              <th className="px-8 py-5 font-bold sticky top-0 bg-white/80 backdrop-blur-md z-10">Employee</th>
+              <th className="px-8 py-5 font-bold sticky top-0 bg-white/80 backdrop-blur-md z-10">Session ID</th>
+              <th className="px-8 py-5 font-bold sticky top-0 bg-white/80 backdrop-blur-md z-10">Check-in</th>
+              <th className="px-8 py-5 font-bold sticky top-0 bg-white/80 backdrop-blur-md z-10">Check-out</th>
+              <th className="px-8 py-5 font-bold sticky top-0 bg-white/80 backdrop-blur-md z-10">Duration</th>
+              <th className="px-8 py-5 font-bold sticky top-0 bg-white/80 backdrop-blur-md z-10">Status</th>
+              <th className="px-8 py-5 font-bold sticky top-0 bg-white/80 backdrop-blur-md z-10">Source</th>
+              <th className="px-8 py-5 font-bold sticky top-0 bg-white/80 backdrop-blur-md z-10 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-[var(--color-border)]/50">
             {(!data || data.length === 0) ? (
               <tr>
-                <td colSpan={8} className="px-6 py-12 text-center text-sm text-gray-500">
-                  No attendance sessions found.
+                <td colSpan={8} className="px-8 py-20 text-center">
+                  <div className="flex flex-col items-center justify-center">
+                    <div className="w-12 h-12 bg-white/60 rounded-full flex items-center justify-center mb-4 border border-white">
+                      <Filter className="w-5 h-5 text-[var(--color-muted)]" />
+                    </div>
+                    <p className="text-[15px] font-display text-[var(--color-deep-navy)] mb-1">No sessions found</p>
+                    <p className="text-[13px] text-[var(--color-neutral)]">Try adjusting your filters or search terms.</p>
+                  </div>
                 </td>
               </tr>
             ) : (
               data.map((session) => (
-                <tr key={session.id} className="hover:bg-gray-50 transition-colors group">
-                  <td className="px-6 py-4">
-                    <div className="text-sm font-medium text-blue-600 hover:underline cursor-pointer">{session.employee_name}</div>
-                    <div className="text-xs text-gray-500">{session.employee_id}</div>
+                <tr key={session.id} className="hover:bg-white/60 transition-colors duration-300 group">
+                  <td className="px-8 py-5">
+                    <div className="text-[14px] font-semibold text-[var(--color-deep-navy)] group-hover:text-[var(--color-primary)] transition-colors cursor-pointer">{session.employee_name}</div>
+                    <div className="text-[12px] text-[var(--color-neutral)] mt-0.5">{session.employee_id}</div>
                   </td>
-                  <td className="px-6 py-4">
-                    <span className="text-xs font-mono text-gray-600 bg-gray-100 px-2 py-1 rounded">{session.id}</span>
+                  <td className="px-8 py-5">
+                    <span className="text-[12px] font-mono font-medium text-[var(--color-muted)] bg-white/60 border border-[var(--color-border)] px-2.5 py-1 rounded-md">{session.id}</span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{session.check_in_time || '—'}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{session.check_out_time || '—'}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{session.duration_minutes ? `${Math.floor(session.duration_minutes / 60)}h ${session.duration_minutes % 60}m` : '—'}</td>
-                  <td className="px-6 py-4">
+                  <td className="px-8 py-5 text-[14px] text-[var(--color-neutral)]">{session.check_in_time || '—'}</td>
+                  <td className="px-8 py-5 text-[14px] text-[var(--color-neutral)]">{session.check_out_time || '—'}</td>
+                  <td className="px-8 py-5 text-[14px] text-[var(--color-neutral)]">{session.duration_minutes ? `${Math.floor(session.duration_minutes / 60)}h ${session.duration_minutes % 60}m` : '—'}</td>
+                  <td className="px-8 py-5">
                     <span className={clsx(
-                      "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium",
-                      session.status === 'Completed' ? "bg-gray-100 text-gray-800" :
-                      session.status === 'Present' ? "bg-green-100 text-green-800" :
-                      session.status === 'Exception' ? "bg-red-100 text-red-800" :
-                      "bg-blue-100 text-blue-800"
+                      "inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold tracking-wide border shadow-sm",
+                      session.status === 'Completed' ? "bg-slate-100/80 text-slate-700 border-slate-200/50" :
+                      session.status === 'Present' ? "bg-green-100/80 text-green-800 border-green-200/50" :
+                      session.status === 'Exception' ? "bg-red-100/80 text-red-800 border-red-200/50" :
+                      "bg-blue-100/80 text-blue-800 border-blue-200/50"
                     )}>
                       {session.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4">
-                    <span className="text-xs text-gray-500">{session.source || '—'}</span>
+                  <td className="px-8 py-5">
+                    <span className="text-[13px] text-[var(--color-neutral)]">{session.source || '—'}</span>
                   </td>
-                  <td className="px-6 py-4 text-right">
-                    <button className="text-sm font-medium text-blue-600 hover:text-blue-800 opacity-0 group-hover:opacity-100 transition-opacity">
-                      View Details
+                  <td className="px-8 py-5 text-right">
+                    <button className="text-[13px] font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-x-2 group-hover:translate-x-0">
+                      View Details →
                     </button>
                   </td>
                 </tr>
@@ -125,11 +131,11 @@ export const SessionsView = ({ refreshKey }: { refreshKey: number }) => {
       </div>
 
       {/* Pagination Footer */}
-      <div className="p-4 border-t border-gray-200 flex items-center justify-between bg-white text-sm text-gray-500">
+      <div className="px-6 py-4 border-t border-[var(--color-border)] flex items-center justify-between bg-white/40 text-[13px] text-[var(--color-neutral)] font-medium">
         <div>Showing 1 to {data.length} of {data.length} sessions</div>
-        <div className="flex items-center gap-2">
-          <button className="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50">Previous</button>
-          <button className="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50">Next</button>
+        <div className="flex items-center gap-3">
+          <button className="btn-secondary disabled:opacity-50">Previous</button>
+          <button className="btn-secondary disabled:opacity-50">Next</button>
         </div>
       </div>
     </div>

@@ -21,6 +21,8 @@ import {
   LucideIcon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { Logo } from "@/components/ui/Logo";
 
 type NavItem = {
   name: string;
@@ -86,59 +88,82 @@ export default function Sidebar() {
   const currentPath = usePathname();
 
   return (
-    <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col h-full border-r border-slate-800">
-      <div className="h-16 flex items-center px-6 border-b border-slate-800 shrink-0">
-        <span className="font-bold text-lg text-white tracking-tight flex items-center gap-2">
-          <MapPin className="w-5 h-5 text-blue-500" />
-          GovTrack360
-        </span>
+    <aside className="w-[250px] min-w-[250px] max-w-[250px] bg-white text-[var(--color-neutral)] flex flex-col h-full border-r border-[#E8EEF5] relative z-50">
+      <div className="h-[72px] flex items-center justify-center px-4 border-b border-[#E8EEF5] shrink-0">
+        <Logo variant="full" />
       </div>
 
-      <div className="flex-1 overflow-y-auto py-4 custom-scrollbar">
+      <div className="flex-1 overflow-y-auto py-5 custom-scrollbar">
         {NAV_ITEMS.map((group, i) => (
-          <div key={i} className="mb-6">
-            <h3 className="px-6 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+          <div key={i} className="mb-8">
+            <h3 className="px-4 text-[9px] font-display font-medium text-[var(--color-neutral)]/80 uppercase tracking-[0.12em] mb-3">
               {group.category}
             </h3>
-            <ul className="space-y-0.5">
+            <ul className="space-y-1">
               {group.items.map((item, j) => {
                 const Icon = item.icon;
                 const isActive = currentPath === item.href || (item.href !== '/' && currentPath.startsWith(item.href));
                 return (
-                  <li key={j} className="relative">
+                  <li key={j} className="relative px-3">
                     <Link
                       href={item.href}
                       className={cn(
-                        "flex items-center justify-between px-6 py-2.5 text-sm transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group",
+                        "relative flex items-center justify-between px-3 h-[40px] rounded-[10px] transition-all duration-[300ms] ease-[cubic-bezier(0.16,1,0.3,1)] group overflow-hidden",
                         isActive
-                          ? "bg-blue-600/10 text-blue-400"
-                          : "text-slate-300 hover:bg-slate-800/80 hover:text-slate-100 hover:translate-x-1"
+                          ? "text-[var(--color-primary)]"
+                          : "text-[var(--color-neutral)] hover:text-[var(--color-deep-navy)]"
                       )}
                     >
-                      <div className="flex items-center gap-3">
+                      {isActive && (
+                        <>
+                          <motion.div
+                            layoutId="sidebar-active-bg"
+                            className="absolute inset-0 bg-[var(--color-soft-blue)] rounded-[10px] z-0"
+                            initial={false}
+                            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                          />
+                          <motion.div 
+                            layoutId="sidebar-active-indicator"
+                            className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-[var(--color-primary)] rounded-r-full z-10"
+                            initial={false}
+                            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                          />
+                        </>
+                      )}
+                      {!isActive && (
+                        <div className="absolute inset-0 bg-gray-50/0 group-hover:bg-gray-50 rounded-[10px] transition-colors duration-[300ms] z-0" />
+                      )}
+                      
+                      <div className="flex items-center gap-[12px] relative z-10">
                         <Icon className={cn(
-                          "w-4 h-4 transition-colors duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
-                          isActive ? "text-blue-500" : "text-slate-500 group-hover:text-blue-400"
+                          "w-[18px] h-[18px] transition-all duration-[300ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
+                          isActive ? "text-[var(--color-primary)]" : "text-[var(--color-neutral)] group-hover:text-[var(--color-deep-navy)]"
                         )} />
-                        {item.name}
+                        <span className={isActive ? "font-display font-medium text-[12px] text-[var(--color-primary)]" : "font-display font-normal text-[12px] text-[var(--color-neutral)]"}>{item.name}</span>
                       </div>
+                      
                       {item.badge && (
-                        <span className="bg-blue-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded transition-transform duration-300 group-hover:scale-105">
+                        <span className="relative z-10 bg-[var(--color-soft-blue)] text-[var(--color-primary)] text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm">
                           {item.badge}
                         </span>
                       )}
                     </Link>
-                    {/* Animated Indicator */}
-                    <div className={cn(
-                      "absolute right-0 top-1 bottom-1 w-[3px] rounded-l-full transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
-                      isActive ? "bg-blue-500 scale-y-100" : "bg-blue-500/0 scale-y-0 group-hover:bg-slate-600 group-hover:scale-y-50"
-                    )} />
                   </li>
                 );
               })}
             </ul>
           </div>
         ))}
+      </div>
+      
+      <div className="mt-auto shrink-0 border-t border-[#E8EEF5] p-4">
+        <Link 
+          href="/settings"
+          className="flex items-center gap-[12px] px-3 h-[40px] rounded-[10px] text-[12px] text-[var(--color-neutral)] hover:text-[var(--color-deep-navy)] hover:bg-gray-50 transition-all duration-[300ms] group"
+        >
+          <Settings className="w-[18px] h-[18px] text-[var(--color-neutral)] group-hover:text-[var(--color-deep-navy)] transition-colors" />
+          <span className="font-display font-normal">Settings & Preferences</span>
+        </Link>
       </div>
     </aside>
   );

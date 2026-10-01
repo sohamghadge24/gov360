@@ -126,47 +126,49 @@ export const ControlRoomWorkspace = () => {
   const selectedEmployeeStatus = selectedEmployeeId ? statusList.find(s => s.employeeId === selectedEmployeeId) : null;
 
   return (
-    <div className="flex flex-col h-screen bg-[#F7F8FA] overflow-hidden">
+    <div className="flex flex-col h-screen bg-transparent overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b px-6 py-4 flex items-center justify-between shadow-sm shrink-0 z-10">
-        <div>
-          <nav className="text-[12px] font-medium text-gray-500 mb-1 flex items-center gap-2">
-            <span>Operations</span> <span>/</span> <span className="text-gray-900 font-semibold">Live Control Room</span>
-          </nav>
-          <h1 className="text-xl font-bold text-gray-900">Live Control Room</h1>
-          <p className="text-[13px] text-gray-500">Real-time workforce, verification and field-duty monitoring.</p>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <div className="hidden md:flex items-center gap-3">
-            <button className="px-3 py-1.5 border border-gray-200 rounded text-sm font-medium text-gray-700 bg-gray-50 flex items-center gap-1.5">
-              Scope: Maharashtra <ChevronDown className="w-3.5 h-3.5" />
-            </button>
-            <div className="relative">
-              <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                placeholder="Search employee..."
-                className="pl-9 pr-3 py-1.5 border border-gray-200 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-48"
-              />
-            </div>
+      <div className="px-10 pt-8 pb-4 relative z-10 shrink-0">
+        <div className="max-w-[1600px] mx-auto flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <div className="text-[11px] font-display font-semibold tracking-[0.15em] text-[var(--color-muted)] uppercase mb-3">OPERATIONS</div>
+            <h1 className="font-display text-[42px] md:text-[46px] font-light leading-[1.1] text-[var(--color-deep-navy)] tracking-[-0.035em] font-light">LIVE CONTROL ROOM</h1>
+            <p className="text-[15px] text-[var(--color-neutral)] mt-4 max-w-sm leading-relaxed">
+              Real-time workforce, verification and field-duty monitoring.
+            </p>
           </div>
 
-          <button onClick={handleRefresh} className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors" title="Refresh">
-            <RefreshCw className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-4 mt-4 md:mt-0">
+            <div className="hidden md:flex items-center gap-3">
+              <button className="px-4 py-2 bg-white/40 border border-white rounded-[14px] shadow-sm text-[13px] font-medium text-[var(--color-deep-navy)] backdrop-blur-md flex items-center gap-1.5 hover:bg-white/60 transition-colors">
+                Scope: Maharashtra <ChevronDown className="w-3.5 h-3.5" />
+              </button>
+              <div className="relative">
+                <Search className="w-4 h-4 text-[var(--color-muted)] absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Search employee..."
+                  className="pl-9 pr-3 py-2 bg-white/40 border border-white rounded-[14px] text-[13px] text-[var(--color-deep-navy)] focus:outline-none focus:ring-1 focus:ring-[var(--color-border)] w-48 backdrop-blur-md"
+                />
+              </div>
+            </div>
 
-          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider ${connectionState === 'LIVE' ? 'bg-green-50 text-green-700 border border-green-100' :
-              connectionState === 'CONNECTING' ? 'bg-blue-50 text-blue-700 border border-blue-100' :
-                connectionState === 'RECONNECTING' ? 'bg-amber-50 text-amber-700 border border-amber-100' :
-                  'bg-gray-100 text-gray-600 border border-gray-200'
-            }`}>
-            <span className={`w-2 h-2 rounded-full ${connectionState === 'LIVE' ? 'bg-green-500 animate-pulse' :
-                connectionState === 'CONNECTING' ? 'bg-blue-500 animate-bounce' :
-                  connectionState === 'RECONNECTING' ? 'bg-amber-500 animate-pulse' :
-                    'bg-gray-400'
-              }`}></span>
-            {connectionState}
+            <button onClick={handleRefresh} className="p-2.5 text-[var(--color-muted)] hover:text-[var(--color-primary)] hover:bg-white/40 rounded-[12px] transition-colors" title="Refresh">
+              <RefreshCw className="w-4 h-4" />
+            </button>
+
+            <div className={`flex items-center gap-1.5 px-4 py-2 rounded-[14px] text-[11px] font-bold uppercase tracking-wider backdrop-blur-md shadow-sm border ${connectionState === 'LIVE' ? 'bg-[#E1F7E9]/80 text-[#0A5D2C] border-white' :
+                connectionState === 'CONNECTING' ? 'bg-blue-50/80 text-blue-700 border-white' :
+                  connectionState === 'RECONNECTING' ? 'bg-amber-50/80 text-amber-700 border-white' :
+                    'bg-white/40 text-[var(--color-muted)] border-white'
+              }`}>
+              <span className={`w-2 h-2 rounded-full ${connectionState === 'LIVE' ? 'bg-[#0A5D2C] animate-pulse' :
+                  connectionState === 'CONNECTING' ? 'bg-blue-500 animate-bounce' :
+                    connectionState === 'RECONNECTING' ? 'bg-amber-500 animate-pulse' :
+                      'bg-[var(--color-muted)]'
+                }`}></span>
+              {connectionState}
+            </div>
           </div>
         </div>
       </div>
@@ -180,38 +182,38 @@ export const ControlRoomWorkspace = () => {
         </div>
       )}
 
-      <div className="flex-1 overflow-hidden flex flex-col p-4 gap-4 max-w-[1600px] mx-auto w-full">
+      <div className="flex-1 overflow-hidden flex flex-col p-8 gap-5 max-w-[1600px] mx-auto w-full relative z-10">
         {/* KPI Strip */}
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-3 shrink-0">
-          <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm flex flex-col justify-center">
-            <span className="text-[11px] font-bold text-gray-500 uppercase mb-1">Present</span>
-            <div className="text-2xl font-bold text-gray-900 leading-none mb-1">{loading ? '-' : summary?.present || 0}</div>
-            <span className="text-xs text-gray-500 font-medium">{loading ? '...' : summary?.presentTrend || 'today'}</span>
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-4 shrink-0">
+          <div className="glass-card p-5 flex flex-col justify-center relative overflow-hidden">
+            <span className="text-[11px] font-bold text-[var(--color-neutral)] uppercase tracking-[0.12em] mb-2">Present</span>
+            <div className="font-display text-[32px] text-[var(--color-deep-navy)] leading-none mb-2 font-light">{loading ? '-' : summary?.present || 0}</div>
+            <span className="text-[12px] text-[var(--color-muted)] font-medium">{loading ? '...' : summary?.presentTrend || 'today'}</span>
           </div>
-          <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm flex flex-col justify-center">
-            <span className="text-[11px] font-bold text-gray-500 uppercase mb-1">On Duty</span>
-            <div className="text-2xl font-bold text-blue-600 leading-none mb-1">{loading ? '-' : summary?.onDuty || 0}</div>
-            <span className="text-xs text-gray-500 font-medium">Field {loading ? '-' : summary?.fieldDuty || 0}</span>
+          <div className="glass-card p-5 flex flex-col justify-center relative overflow-hidden">
+            <span className="text-[11px] font-bold text-[var(--color-neutral)] uppercase tracking-[0.12em] mb-2">On Duty</span>
+            <div className="font-display text-[32px] text-[var(--color-primary)] leading-none mb-2 font-light">{loading ? '-' : summary?.onDuty || 0}</div>
+            <span className="text-[12px] text-[var(--color-muted)] font-medium">Field {loading ? '-' : summary?.fieldDuty || 0}</span>
           </div>
-          <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm flex flex-col justify-center">
-            <span className="text-[11px] font-bold text-gray-500 uppercase mb-1">Due</span>
-            <div className="text-2xl font-bold text-amber-600 leading-none mb-1">{loading ? '-' : summary?.verificationDue || 0}</div>
-            <span className="text-xs text-gray-500 font-medium">Next {loading ? '-' : summary?.dueWithinMins || 30} min</span>
+          <div className="glass-card p-5 flex flex-col justify-center relative overflow-hidden">
+            <span className="text-[11px] font-bold text-[var(--color-neutral)] uppercase tracking-[0.12em] mb-2">Due</span>
+            <div className="font-display text-[32px] text-amber-600 leading-none mb-2 font-light">{loading ? '-' : summary?.verificationDue || 0}</div>
+            <span className="text-[12px] text-[var(--color-muted)] font-medium">Next {loading ? '-' : summary?.dueWithinMins || 30} min</span>
           </div>
-          <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm flex flex-col justify-center">
-            <span className="text-[11px] font-bold text-gray-500 uppercase mb-1">Missed</span>
-            <div className="text-2xl font-bold text-red-600 leading-none mb-1">{loading ? '-' : summary?.missed || 0}</div>
-            <span className="text-xs text-gray-500 font-medium">Needs review</span>
+          <div className="glass-card p-5 flex flex-col justify-center relative overflow-hidden">
+            <span className="text-[11px] font-bold text-[var(--color-neutral)] uppercase tracking-[0.12em] mb-2">Missed</span>
+            <div className="font-display text-[32px] text-red-600 leading-none mb-2 font-light">{loading ? '-' : summary?.missed || 0}</div>
+            <span className="text-[12px] text-[var(--color-muted)] font-medium">Needs review</span>
           </div>
-          <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm flex flex-col justify-center">
-            <span className="text-[11px] font-bold text-gray-500 uppercase mb-1">Exceptions</span>
-            <div className="text-2xl font-bold text-purple-600 leading-none mb-1">{loading ? '-' : summary?.exceptions || 0}</div>
-            <span className="text-xs text-purple-600 font-medium">{loading ? '-' : summary?.urgentExceptions || 0} urgent</span>
+          <div className="glass-card p-5 flex flex-col justify-center relative overflow-hidden">
+            <span className="text-[11px] font-bold text-[var(--color-neutral)] uppercase tracking-[0.12em] mb-2">Exceptions</span>
+            <div className="font-display text-[32px] text-purple-600 leading-none mb-2 font-light">{loading ? '-' : summary?.exceptions || 0}</div>
+            <span className="text-[12px] text-purple-600 font-medium">{loading ? '-' : summary?.urgentExceptions || 0} urgent</span>
           </div>
-          <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm flex flex-col justify-center">
-            <span className="text-[11px] font-bold text-gray-500 uppercase mb-1">Outside Zone</span>
-            <div className="text-2xl font-bold text-orange-600 leading-none mb-1">{loading ? '-' : summary?.outsideZone || 0}</div>
-            <span className="text-xs text-gray-500 font-medium">Review</span>
+          <div className="glass-card p-5 flex flex-col justify-center relative overflow-hidden">
+            <span className="text-[11px] font-bold text-[var(--color-neutral)] uppercase tracking-[0.12em] mb-2">Outside Zone</span>
+            <div className="font-display text-[32px] text-orange-600 leading-none mb-2 font-light">{loading ? '-' : summary?.outsideZone || 0}</div>
+            <span className="text-[12px] text-[var(--color-muted)] font-medium">Review</span>
           </div>
         </div>
 
@@ -220,18 +222,18 @@ export const ControlRoomWorkspace = () => {
 
           {/* Left Panel: Employee Status */}
           {!isMapExpanded && (
-            <div className="w-[30%] min-w-[320px] bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col overflow-hidden">
-              <div className="px-4 py-3 border-b border-gray-100 bg-gray-50 flex items-center justify-between shrink-0">
-                <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Employee Status</h2>
+            <div className="w-[30%] min-w-[320px] glass-card flex flex-col overflow-hidden">
+              <div className="px-6 py-5 border-b border-[var(--color-border)]/50 bg-white/20 flex items-center justify-between shrink-0">
+                <h2 className="text-[12px] font-bold text-[var(--color-neutral)] uppercase tracking-[0.12em]">Employee Status</h2>
                 <div className="flex items-center gap-1">
-                  <button className="text-[11px] font-bold px-2 py-1 bg-white border border-gray-200 rounded text-gray-600 hover:bg-gray-50">All</button>
-                  <button className="text-[11px] font-bold px-2 py-1 border border-transparent rounded text-gray-500 hover:bg-gray-100">Field</button>
+                  <button className="text-[11px] font-bold px-3 py-1 bg-white/60 border border-white rounded-[10px] text-[var(--color-deep-navy)] hover:bg-white shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-colors">All</button>
+                  <button className="text-[11px] font-bold px-3 py-1 border border-transparent rounded-[10px] text-[var(--color-muted)] hover:bg-white/40 transition-colors">Field</button>
                 </div>
               </div>
-              <div className="p-2 border-b border-gray-100 shrink-0">
+              <div className="p-4 border-b border-[var(--color-border)]/50 shrink-0">
                 <div className="relative">
-                  <Search className="w-3.5 h-3.5 text-gray-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
-                  <input type="text" placeholder="Search..." className="w-full pl-8 pr-3 py-1.5 bg-gray-50 border border-gray-200 rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                  <Search className="w-4 h-4 text-[var(--color-muted)] absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input type="text" placeholder="Search..." className="w-full pl-9 pr-4 py-2 bg-white/40 border border-white rounded-[12px] text-[13px] text-[var(--color-deep-navy)] focus:outline-none focus:ring-1 focus:ring-[var(--color-border)] backdrop-blur-md" />
                 </div>
               </div>
               <div className="flex-1 overflow-y-auto">
@@ -280,7 +282,7 @@ export const ControlRoomWorkspace = () => {
           )}
 
           {/* Center Panel: Map Area */}
-          <div className="flex-1 bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col overflow-hidden relative">
+          <div className="flex-1 glass-card flex flex-col overflow-hidden relative">
             <div className="absolute top-4 left-4 z-10 flex gap-2">
               <button className="bg-white/90 backdrop-blur shadow-sm border border-gray-200 rounded-md px-3 py-1.5 text-xs font-bold text-gray-700 hover:bg-white">Employees</button>
               <button className="bg-white/90 backdrop-blur shadow-sm border border-gray-200 rounded-md px-3 py-1.5 text-xs font-bold text-gray-700 hover:bg-white">Wards</button>
@@ -339,18 +341,18 @@ export const ControlRoomWorkspace = () => {
 
           {/* Right Panel: Alert Queue */}
           {!isMapExpanded && (
-            <div className="w-[25%] min-w-[280px] bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col overflow-hidden">
-              <div className="px-4 py-3 border-b border-gray-100 bg-gray-50 flex items-center justify-between shrink-0">
-                <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Operational Queue</h2>
+            <div className="w-[25%] min-w-[280px] glass-card flex flex-col overflow-hidden">
+              <div className="px-6 py-5 border-b border-[var(--color-border)]/50 bg-white/20 flex items-center justify-between shrink-0">
+                <h2 className="text-[12px] font-bold text-[var(--color-neutral)] uppercase tracking-[0.12em]">Operational Queue</h2>
               </div>
-              <div className="flex border-b border-gray-100 shrink-0">
-                <button className="flex-1 py-2 text-xs font-bold text-blue-600 border-b-2 border-blue-600">All</button>
-                <button className="flex-1 py-2 text-xs font-bold text-gray-500 border-b-2 border-transparent">Due</button>
-                <button className="flex-1 py-2 text-xs font-bold text-gray-500 border-b-2 border-transparent">Missed</button>
-                <button className="flex-1 py-2 text-xs font-bold text-gray-500 border-b-2 border-transparent">Exceptions</button>
+              <div className="flex border-b border-[var(--color-border)]/50 shrink-0">
+                <button className="flex-1 py-3 text-[11px] font-bold tracking-[0.05em] uppercase text-[var(--color-primary)] border-b-2 border-[var(--color-primary)] bg-white/30">All</button>
+                <button className="flex-1 py-3 text-[11px] font-bold tracking-[0.05em] uppercase text-[var(--color-muted)] border-b-2 border-transparent hover:bg-white/10 transition-colors">Due</button>
+                <button className="flex-1 py-3 text-[11px] font-bold tracking-[0.05em] uppercase text-[var(--color-muted)] border-b-2 border-transparent hover:bg-white/10 transition-colors">Missed</button>
+                <button className="flex-1 py-3 text-[11px] font-bold tracking-[0.05em] uppercase text-[var(--color-muted)] border-b-2 border-transparent hover:bg-white/10 transition-colors">Excpt</button>
               </div>
 
-              <div className="flex-1 overflow-y-auto p-3 space-y-3 bg-gray-50/30">
+              <div className="flex-1 overflow-y-auto p-5 space-y-4">
                 {loading ? (
                   <div className="flex justify-center p-4"><Loader2 className="w-5 h-5 text-gray-400 animate-spin" /></div>
                 ) : exceptions.length === 0 && dueList.length === 0 ? (

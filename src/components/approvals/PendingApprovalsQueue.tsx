@@ -28,60 +28,71 @@ export const PendingApprovalsQueue = ({ onViewDetail }: Props) => {
 
   if (loading) {
     return (
-      <div className="bg-white p-12 rounded-lg border border-gray-200 shadow-sm flex flex-col items-center justify-center text-gray-500">
-        <Loader2 className="w-8 h-8 animate-spin mb-4 text-blue-600" />
-        <p>Loading pending approvals...</p>
+      <div className="glass-card min-h-[400px] flex flex-col items-center justify-center p-12">
+        <Loader2 className="w-8 h-8 animate-spin mb-4 text-[var(--color-primary)]" />
+        <p className="text-[14px] text-[var(--color-neutral)] font-medium tracking-wide">Loading approvals...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-white p-12 rounded-lg border border-gray-200 shadow-sm flex flex-col items-center justify-center text-center">
-        <AlertTriangle className="w-12 h-12 text-red-500 mb-4" />
-        <p className="text-gray-900 font-medium mb-1">{error}</p>
-        <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2 border rounded-md text-sm hover:bg-gray-50">Retry</button>
+      <div className="glass-card min-h-[400px] flex flex-col items-center justify-center text-center p-12">
+        <div className="w-16 h-16 rounded-full bg-white/60 shadow-sm flex items-center justify-center mb-6 border border-white">
+          <AlertTriangle className="w-7 h-7 text-red-500" />
+        </div>
+        <p className="font-display text-[22px] text-[var(--color-deep-navy)] mb-2 font-medium">Service Unavailable</p>
+        <p className="text-[14px] text-[var(--color-neutral)] mb-6 max-w-[280px] leading-relaxed">{error}</p>
+        <button onClick={() => window.location.reload()} className="btn-secondary">Retry Connection</button>
       </div>
     );
   }
 
   if (data.length === 0) {
     return (
-      <div className="bg-white p-12 rounded-lg border border-gray-200 shadow-sm flex flex-col items-center justify-center text-center">
-        <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-4 text-gray-400">
-          <Eye className="w-6 h-6" />
+      <div className="glass-card min-h-[400px] flex flex-col items-center justify-center text-center p-12">
+        <div className="w-16 h-16 rounded-full bg-white/60 shadow-sm flex items-center justify-center mb-6 border border-white">
+          <Eye className="w-7 h-7 text-[var(--color-muted)]" />
         </div>
-        <p className="text-gray-900 font-medium">No pending approvals.</p>
-        <p className="text-gray-500 text-sm mt-1">You are all caught up.</p>
+        <p className="font-display text-[26px] text-[var(--color-deep-navy)] mb-2 font-medium">No pending approvals</p>
+        <p className="text-[14px] text-[var(--color-neutral)] max-w-[280px] leading-relaxed">You have reviewed all pending approval requests in your queue.</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden overflow-x-auto">
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Employee</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Reason</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Severity</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Waiting Since</th>
-            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Action</th>
+    <div className="glass-card overflow-hidden overflow-x-auto min-h-[400px]">
+      <table className="w-full text-left border-collapse">
+        <thead>
+          <tr className="border-b border-[var(--color-border)] bg-white/40 backdrop-blur-md">
+            <th className="px-6 py-5 text-[10px] font-bold text-[var(--color-neutral)] uppercase tracking-[0.18em] sticky top-0 bg-white/80 backdrop-blur-md z-10 whitespace-nowrap">ID</th>
+            <th className="px-6 py-5 text-[10px] font-bold text-[var(--color-neutral)] uppercase tracking-[0.18em] sticky top-0 bg-white/80 backdrop-blur-md z-10 whitespace-nowrap">Employee</th>
+            <th className="px-6 py-5 text-[10px] font-bold text-[var(--color-neutral)] uppercase tracking-[0.18em] sticky top-0 bg-white/80 backdrop-blur-md z-10 whitespace-nowrap">Reason</th>
+            <th className="px-6 py-5 text-[10px] font-bold text-[var(--color-neutral)] uppercase tracking-[0.18em] sticky top-0 bg-white/80 backdrop-blur-md z-10 whitespace-nowrap">Severity</th>
+            <th className="px-6 py-5 text-[10px] font-bold text-[var(--color-neutral)] uppercase tracking-[0.18em] sticky top-0 bg-white/80 backdrop-blur-md z-10 whitespace-nowrap">Status</th>
+            <th className="px-6 py-5 text-[10px] font-bold text-[var(--color-neutral)] uppercase tracking-[0.18em] sticky top-0 bg-white/80 backdrop-blur-md z-10 whitespace-nowrap">Waiting Since</th>
+            <th className="px-6 py-5 text-[10px] font-bold text-[var(--color-neutral)] uppercase tracking-[0.18em] sticky top-0 bg-white/80 backdrop-blur-md z-10 whitespace-nowrap text-right">Action</th>
           </tr>
         </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
+        <tbody className="divide-y divide-[var(--color-border)]/50">
           {data.map(item => (
-            <tr key={item.id} className="hover:bg-gray-50 transition-colors">
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">{item.exceptionId}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.employeeName}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.reasonLabel}</td>
-              <td className="px-6 py-4 whitespace-nowrap"><SeverityBadge severity={item.severity} /></td>
-              <td className="px-6 py-4 whitespace-nowrap"><StatusBadge status={item.status} /></td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(item.waitingSince).toLocaleString()}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <button onClick={() => onViewDetail(item.exceptionId)} className="text-blue-600 hover:text-blue-900 font-semibold px-3 py-1 hover:bg-blue-50 rounded">Review</button>
+            <tr key={item.id} className="hover:bg-white/40 transition-colors duration-[400ms] group">
+              <td className="px-6 py-5 whitespace-nowrap">
+                <span className="text-[13px] font-bold text-[var(--color-primary)]">{item.exceptionId}</span>
+              </td>
+              <td className="px-6 py-5 whitespace-nowrap">
+                <span className="text-[14px] font-semibold text-[var(--color-deep-navy)]">{item.employeeName}</span>
+              </td>
+              <td className="px-6 py-5 whitespace-nowrap">
+                <span className="text-[13px] text-[var(--color-muted)] font-medium">{item.reasonLabel}</span>
+              </td>
+              <td className="px-6 py-5 whitespace-nowrap"><SeverityBadge severity={item.severity} /></td>
+              <td className="px-6 py-5 whitespace-nowrap"><StatusBadge status={item.status} /></td>
+              <td className="px-6 py-5 whitespace-nowrap text-[13px] text-[var(--color-muted)] font-medium">{new Date(item.waitingSince).toLocaleString()}</td>
+              <td className="px-6 py-5 whitespace-nowrap text-right">
+                <button onClick={() => onViewDetail(item.exceptionId)} className="text-[13px] font-semibold text-[var(--color-primary)] hover:text-blue-800 transition-colors px-3 py-1.5 rounded-lg hover:bg-blue-50/50">
+                  Review
+                </button>
               </td>
             </tr>
           ))}
