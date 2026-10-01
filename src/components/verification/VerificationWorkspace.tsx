@@ -14,8 +14,10 @@ export const VerificationWorkspace = () => {
   const [result, setResult] = useState<VerificationResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  
   const [selectedHistorySlot, setSelectedHistorySlot] = useState<VerificationSlot | null>(null);
+
+  const [statusFilter, setStatusFilter] = useState('');
+  const [methodFilter, setMethodFilter] = useState('');
 
   const fetchDashboard = async () => {
     setFlowState('LOADING_SLOT');
@@ -114,7 +116,16 @@ export const VerificationWorkspace = () => {
     }
   };
 
-  const completedSlots = slots.filter(s => s.status === 'Verified' || s.status === 'Failed' || s.status === 'Missed' || s.status === 'Expired');
+  const completedSlots = slots.filter(s => {
+    if (s.status === 'Pending' || s.status === 'Due' || s.status === 'In progress') return false;
+    
+    if (statusFilter && s.status !== statusFilter) return false;
+    
+    if (methodFilter && !s.requiredEvidence.includes(methodFilter as any)) return false;
+
+    return true;
+  });
+  
   const pendingSlots = slots.filter(s => s.status === 'Pending' || s.status === 'Due' || s.status === 'In progress');
 
   return (
@@ -290,8 +301,28 @@ export const VerificationWorkspace = () => {
           <div className="px-8 py-5 border-b border-[var(--color-border)] flex items-center justify-between">
             <h3 className="font-display text-[22px] text-[var(--color-deep-navy)] font-medium">Verification History</h3>
             <div className="flex items-center gap-3 text-xs font-medium text-gray-500">
-              <span className="flex items-center gap-1 cursor-pointer hover:text-gray-900">Status <ChevronDown className="w-3 h-3" /></span>
-              <span className="flex items-center gap-1 cursor-pointer hover:text-gray-900">Method <ChevronDown className="w-3 h-3" /></span>
+              <select 
+                value={statusFilter}
+                onChange={e => setStatusFilter(e.target.value)}
+                className="bg-transparent border-none cursor-pointer text-gray-500 hover:text-gray-900 focus:ring-0 outline-none"
+              >
+                <option value="">All Statuses</option>
+                <option value="Verified">Verified</option>
+                <option value="Failed">Failed</option>
+                <option value="Missed">Missed</option>
+              </select>
+              <select 
+                value={methodFilter}
+                onChange={e => setMethodFilter(e.target.value)}
+                className="bg-transparent border-none cursor-pointer text-gray-500 hover:text-gray-900 focus:ring-0 outline-none"
+              >
+                <option value="">All Methods</option>
+                <option value="GPS">GPS</option>
+                <option value="Selfie">Selfie</option>
+                <option value="QR">QR</option>
+                <option value="NFC">NFC</option>
+                <option value="WiFi">WiFi</option>
+              </select>
             </div>
           </div>
           

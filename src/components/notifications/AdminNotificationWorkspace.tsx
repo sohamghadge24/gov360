@@ -16,8 +16,9 @@ export const AdminNotificationWorkspace = () => {
   // Hardcoded role for demo purposes. In a real app, this comes from auth context.
   const isAdmin = true;
 
-  <div className="flex flex-col h-full bg-transparent min-h-screen relative">
-    <div className="px-10 pt-8 pb-4 relative z-10 shrink-0">
+  return (
+    <div className="flex flex-col h-full bg-transparent min-h-screen relative">
+      <div className="px-10 pt-8 pb-4 relative z-10 shrink-0">
       <div className="max-w-[1600px] mx-auto flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <div className="text-[11px] font-display font-semibold tracking-[0.15em] text-[var(--color-muted)] uppercase mb-3">ADMINISTRATION</div>
@@ -70,7 +71,7 @@ export const AdminNotificationWorkspace = () => {
       {activeTab === 'delivery' && isAdmin && <DeliveryTab />}
     </div>
   </div>
-
+  );
 };
 
 // --- Sub-components ---

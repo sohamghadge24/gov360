@@ -40,7 +40,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({ node, level, onSelect, selectedNode
         style={{ paddingLeft: `${level * 1.2 + 0.5}rem` }}
         onClick={() => onSelect(node)}
       >
-        <span 
+        <span
           className="w-5 h-5 flex items-center justify-center mr-1"
           onClick={(e) => {
             if (hasChildren) {
@@ -96,7 +96,7 @@ export const OrganizationTree = ({
     getOrganizationTree()
       .then(data => {
         if (!mounted) return;
-        setTree(data);
+        setTree(data ?? []);
       })
       .catch(() => {
         if (mounted) setError(true);

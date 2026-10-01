@@ -40,8 +40,8 @@ const NAV_ITEMS: NavGroup[] = [
   {
     category: "OVERVIEW",
     items: [
-      { name: "Dashboard", href: "/", icon: LayoutDashboard },
-      { name: "Live Control Room", href: "/live", icon: Map },
+      { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+      { name: "Live Control Room", href: "/live-control-room", icon: Map },
     ]
   },
   {
@@ -54,7 +54,7 @@ const NAV_ITEMS: NavGroup[] = [
   {
     category: "DUTY OPERATIONS",
     items: [
-      { name: "Roster & Duty", href: "/roster", icon: Calendar },
+      { name: "Roster & Duty", href: "/roster-duty", icon: Calendar },
       { name: "Verification", href: "/verification", icon: CheckCircle },
     ]
   },
@@ -73,7 +73,7 @@ const NAV_ITEMS: NavGroup[] = [
   {
     category: "ADMINISTRATION",
     items: [
-      { name: "Organization", href: "/admin/organization", icon: Network },
+      { name: "Organization", href: "/organization", icon: Network },
       { name: "Locations & Geofences", href: "/admin/locations", icon: MapPin },
       { name: "Roles & Permissions", href: "/admin/roles", icon: ShieldAlert },
       { name: "Notifications", href: "/admin/notifications", icon: Bell },

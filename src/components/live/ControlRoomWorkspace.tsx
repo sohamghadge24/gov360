@@ -15,6 +15,7 @@ import {
   TimelineEvent,
   FieldCoverage
 } from "@/api/monitoring";
+import { getOrganizations, OrganizationNode } from "@/api/organization";
 
 export const ControlRoomWorkspace = () => {
   const [loading, setLoading] = useState(true);
@@ -36,6 +37,22 @@ export const ControlRoomWorkspace = () => {
   const [isTimelineLoading, setIsTimelineLoading] = useState(false);
   const [isMapExpanded, setIsMapExpanded] = useState(false);
 
+  // Interactive controls state
+  const [scopes, setScopes] = useState<OrganizationNode[]>([]);
+  const [selectedScope, setSelectedScope] = useState<string>("Maharashtra");
+  const [showScopeDropdown, setShowScopeDropdown] = useState(false);
+  
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  
+  const [statusFilter, setStatusFilter] = useState<'All' | 'Field'>('All');
+  const [queueFilter, setQueueFilter] = useState<'ALL' | 'DUE' | 'MISSED' | 'EXCPT'>('ALL');
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(searchQuery), 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
   useEffect(() => {
     fetchInitialData();
     // Simulate realtime connection lifecycle
@@ -48,6 +65,12 @@ export const ControlRoomWorkspace = () => {
       fetchTimeline(selectedEmployeeId);
     }
   }, [selectedEmployeeId]);
+
+  useEffect(() => {
+    getOrganizations().then(orgs => {
+      setScopes(Array.isArray(orgs) ? orgs : (orgs as any)?.items || []);
+    }).catch(() => {});
+  }, []);
 
   const fetchInitialData = async () => {
     setLoading(true);
@@ -125,6 +148,20 @@ export const ControlRoomWorkspace = () => {
 
   const selectedEmployeeStatus = selectedEmployeeId ? statusList.find(s => s.employeeId === selectedEmployeeId) : null;
 
+  const filteredStatusList = statusList.filter(emp => {
+    if (statusFilter === 'Field' && emp.duty !== 'Field') return false;
+    if (debouncedSearch && !emp.name.toLowerCase().includes(debouncedSearch.toLowerCase()) && !emp.employeeId.includes(debouncedSearch)) return false;
+    return true;
+  });
+
+  const filteredExceptions = exceptions.filter(exc => queueFilter === 'ALL' || queueFilter === 'EXCPT');
+  const filteredDueList = dueList.filter(due => {
+    if (queueFilter === 'ALL') return true;
+    if (queueFilter === 'DUE' && due.status === 'Due') return true;
+    if (queueFilter === 'MISSED' && due.status === 'Missed') return true;
+    return false;
+  });
+
   return (
     <div className="flex flex-col h-screen bg-transparent overflow-hidden">
       {/* Header */}
@@ -140,14 +177,38 @@ export const ControlRoomWorkspace = () => {
 
           <div className="flex items-center gap-4 mt-4 md:mt-0">
             <div className="hidden md:flex items-center gap-3">
-              <button className="px-4 py-2 bg-white/40 border border-white rounded-[14px] shadow-sm text-[13px] font-medium text-[var(--color-deep-navy)] backdrop-blur-md flex items-center gap-1.5 hover:bg-white/60 transition-colors">
-                Scope: Maharashtra <ChevronDown className="w-3.5 h-3.5" />
-              </button>
+              <div className="relative">
+                <button 
+                  onClick={() => setShowScopeDropdown(!showScopeDropdown)}
+                  className="px-4 py-2 bg-white/40 border border-white rounded-[14px] shadow-sm text-[13px] font-medium text-[var(--color-deep-navy)] backdrop-blur-md flex items-center gap-1.5 hover:bg-white/60 transition-colors"
+                >
+                  Scope: {selectedScope} <ChevronDown className="w-3.5 h-3.5" />
+                </button>
+                {showScopeDropdown && (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={() => setShowScopeDropdown(false)}></div>
+                    <div className="absolute top-full mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 p-2 z-50">
+                      {scopes.slice(0, 5).map(scope => (
+                        <button
+                          key={scope.id}
+                          onClick={() => { setSelectedScope(scope.name); setShowScopeDropdown(false); handleRefresh(); }}
+                          className={`w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-gray-50 transition-colors ${selectedScope === scope.name ? 'font-bold text-blue-600' : 'text-gray-700'}`}
+                        >
+                          {scope.name}
+                        </button>
+                      ))}
+                      {scopes.length === 0 && <div className="p-2 text-xs text-gray-500">Loading...</div>}
+                    </div>
+                  </>
+                )}
+              </div>
               <div className="relative">
                 <Search className="w-4 h-4 text-[var(--color-muted)] absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   placeholder="Search employee..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-9 pr-3 py-2 bg-white/40 border border-white rounded-[14px] text-[13px] text-[var(--color-deep-navy)] focus:outline-none focus:ring-1 focus:ring-[var(--color-border)] w-48 backdrop-blur-md"
                 />
               </div>
@@ -226,24 +287,24 @@ export const ControlRoomWorkspace = () => {
               <div className="px-6 py-5 border-b border-[var(--color-border)]/50 bg-white/20 flex items-center justify-between shrink-0">
                 <h2 className="text-[12px] font-bold text-[var(--color-neutral)] uppercase tracking-[0.12em]">Employee Status</h2>
                 <div className="flex items-center gap-1">
-                  <button className="text-[11px] font-bold px-3 py-1 bg-white/60 border border-white rounded-[10px] text-[var(--color-deep-navy)] hover:bg-white shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-colors">All</button>
-                  <button className="text-[11px] font-bold px-3 py-1 border border-transparent rounded-[10px] text-[var(--color-muted)] hover:bg-white/40 transition-colors">Field</button>
+                  <button onClick={() => setStatusFilter('All')} className={`text-[11px] font-bold px-3 py-1 rounded-[10px] transition-colors ${statusFilter === 'All' ? 'bg-white/60 border border-white text-[var(--color-deep-navy)] shadow-[0_1px_2px_rgba(0,0,0,0.02)]' : 'border border-transparent text-[var(--color-muted)] hover:bg-white/40'}`}>All</button>
+                  <button onClick={() => setStatusFilter('Field')} className={`text-[11px] font-bold px-3 py-1 rounded-[10px] transition-colors ${statusFilter === 'Field' ? 'bg-white/60 border border-white text-[var(--color-deep-navy)] shadow-[0_1px_2px_rgba(0,0,0,0.02)]' : 'border border-transparent text-[var(--color-muted)] hover:bg-white/40'}`}>Field</button>
                 </div>
               </div>
               <div className="p-4 border-b border-[var(--color-border)]/50 shrink-0">
                 <div className="relative">
                   <Search className="w-4 h-4 text-[var(--color-muted)] absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input type="text" placeholder="Search..." className="w-full pl-9 pr-4 py-2 bg-white/40 border border-white rounded-[12px] text-[13px] text-[var(--color-deep-navy)] focus:outline-none focus:ring-1 focus:ring-[var(--color-border)] backdrop-blur-md" />
+                  <input type="text" placeholder="Search..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-9 pr-4 py-2 bg-white/40 border border-white rounded-[12px] text-[13px] text-[var(--color-deep-navy)] focus:outline-none focus:ring-1 focus:ring-[var(--color-border)] backdrop-blur-md" />
                 </div>
               </div>
               <div className="flex-1 overflow-y-auto">
                 {loading ? (
                   <div className="p-4 flex justify-center"><Loader2 className="w-5 h-5 text-gray-400 animate-spin" /></div>
-                ) : statusList.length === 0 ? (
-                  <div className="p-8 text-center text-gray-500 text-sm">No active workforce</div>
+                ) : filteredStatusList.length === 0 ? (
+                  <div className="p-8 text-center text-gray-500 text-sm">No active workforce found</div>
                 ) : (
                   <div className="divide-y divide-gray-100">
-                    {statusList.map(emp => (
+                    {filteredStatusList.map(emp => (
                       <div
                         key={emp.employeeId}
                         onClick={() => setSelectedEmployeeId(emp.employeeId)}
@@ -346,16 +407,16 @@ export const ControlRoomWorkspace = () => {
                 <h2 className="text-[12px] font-bold text-[var(--color-neutral)] uppercase tracking-[0.12em]">Operational Queue</h2>
               </div>
               <div className="flex border-b border-[var(--color-border)]/50 shrink-0">
-                <button className="flex-1 py-3 text-[11px] font-bold tracking-[0.05em] uppercase text-[var(--color-primary)] border-b-2 border-[var(--color-primary)] bg-white/30">All</button>
-                <button className="flex-1 py-3 text-[11px] font-bold tracking-[0.05em] uppercase text-[var(--color-muted)] border-b-2 border-transparent hover:bg-white/10 transition-colors">Due</button>
-                <button className="flex-1 py-3 text-[11px] font-bold tracking-[0.05em] uppercase text-[var(--color-muted)] border-b-2 border-transparent hover:bg-white/10 transition-colors">Missed</button>
-                <button className="flex-1 py-3 text-[11px] font-bold tracking-[0.05em] uppercase text-[var(--color-muted)] border-b-2 border-transparent hover:bg-white/10 transition-colors">Excpt</button>
+                <button onClick={() => setQueueFilter('ALL')} className={`flex-1 py-3 text-[11px] font-bold tracking-[0.05em] uppercase transition-colors ${queueFilter === 'ALL' ? 'text-[var(--color-primary)] border-b-2 border-[var(--color-primary)] bg-white/30' : 'text-[var(--color-muted)] border-b-2 border-transparent hover:bg-white/10'}`}>All</button>
+                <button onClick={() => setQueueFilter('DUE')} className={`flex-1 py-3 text-[11px] font-bold tracking-[0.05em] uppercase transition-colors ${queueFilter === 'DUE' ? 'text-[var(--color-primary)] border-b-2 border-[var(--color-primary)] bg-white/30' : 'text-[var(--color-muted)] border-b-2 border-transparent hover:bg-white/10'}`}>Due</button>
+                <button onClick={() => setQueueFilter('MISSED')} className={`flex-1 py-3 text-[11px] font-bold tracking-[0.05em] uppercase transition-colors ${queueFilter === 'MISSED' ? 'text-[var(--color-primary)] border-b-2 border-[var(--color-primary)] bg-white/30' : 'text-[var(--color-muted)] border-b-2 border-transparent hover:bg-white/10'}`}>Missed</button>
+                <button onClick={() => setQueueFilter('EXCPT')} className={`flex-1 py-3 text-[11px] font-bold tracking-[0.05em] uppercase transition-colors ${queueFilter === 'EXCPT' ? 'text-[var(--color-primary)] border-b-2 border-[var(--color-primary)] bg-white/30' : 'text-[var(--color-muted)] border-b-2 border-transparent hover:bg-white/10'}`}>Excpt</button>
               </div>
 
               <div className="flex-1 overflow-y-auto p-5 space-y-4">
                 {loading ? (
                   <div className="flex justify-center p-4"><Loader2 className="w-5 h-5 text-gray-400 animate-spin" /></div>
-                ) : exceptions.length === 0 && dueList.length === 0 ? (
+                ) : filteredExceptions.length === 0 && filteredDueList.length === 0 ? (
                   <div className="text-center py-8">
                     <CheckCircle className="w-8 h-8 text-green-400 mx-auto mb-2" />
                     <p className="text-sm font-bold text-gray-900">All clear</p>
@@ -363,7 +424,7 @@ export const ControlRoomWorkspace = () => {
                   </div>
                 ) : (
                   <>
-                    {exceptions.map(exc => (
+                    {filteredExceptions.map(exc => (
                       <div key={exc.id} className="bg-white border border-red-200 rounded-md p-3 shadow-sm relative overflow-hidden">
                         <div className="absolute left-0 top-0 bottom-0 w-1 bg-red-500"></div>
                         <div className="flex justify-between items-start mb-1">
@@ -380,7 +441,7 @@ export const ControlRoomWorkspace = () => {
                       </div>
                     ))}
 
-                    {dueList.map(due => (
+                    {filteredDueList.map(due => (
                       <div key={due.employeeId} className="bg-white border border-amber-200 rounded-md p-3 shadow-sm relative overflow-hidden">
                         <div className="absolute left-0 top-0 bottom-0 w-1 bg-amber-500"></div>
                         <div className="text-sm font-bold text-gray-900 mb-0.5">Verification {due.status}</div>

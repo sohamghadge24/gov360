@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { getTodayAttendance, AttendanceSession } from "@/api/attendance";
-import { Loader2, Calendar } from "lucide-react";
+import { getTodayAttendance, checkIn, checkOut, AttendanceSession } from "@/api/attendance";
+import { Loader2, Calendar, CheckCircle } from "lucide-react";
 
 export const TodayView = ({ refreshKey }: { refreshKey: number }) => {
   const [data, setData] = useState<AttendanceSession | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -26,6 +27,30 @@ export const TodayView = ({ refreshKey }: { refreshKey: number }) => {
 
     return () => { mounted = false; };
   }, [refreshKey]);
+
+  const handleCheckIn = async () => {
+    setActionLoading(true);
+    try {
+      const res = await checkIn({ timestamp: new Date().toISOString() }, `ci-${Date.now()}`);
+      setData(res);
+    } catch (err) {
+      alert("Failed to check in.");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleCheckOut = async () => {
+    setActionLoading(true);
+    try {
+      const res = await checkOut({ timestamp: new Date().toISOString() }, `co-${Date.now()}`);
+      setData(res);
+    } catch (err) {
+      alert("Failed to check out.");
+    } finally {
+      setActionLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -55,9 +80,9 @@ export const TodayView = ({ refreshKey }: { refreshKey: number }) => {
         <p className="text-[14px] text-[var(--color-neutral)] max-w-sm text-center leading-relaxed mb-8">
           Attendance data will appear here once you check in at a designated kiosk or mobile app today.
         </p>
-        <button className="btn-primary group">
-          Check In
-          <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+        <button onClick={handleCheckIn} disabled={actionLoading} className="btn-primary group disabled:opacity-50 flex items-center gap-2">
+          {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Check In"}
+          {!actionLoading && <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>}
         </button>
       </div>
     );
@@ -86,6 +111,14 @@ export const TodayView = ({ refreshKey }: { refreshKey: number }) => {
           <span className="text-[14px] font-mono font-medium text-[var(--color-muted)]">{data.id}</span>
         </div>
       </div>
+      
+      {!data.check_out_time && (
+        <div className="mt-8 flex justify-end">
+          <button onClick={handleCheckOut} disabled={actionLoading} className="btn-secondary text-red-600 hover:text-red-700 hover:bg-red-50 disabled:opacity-50 flex items-center gap-2">
+            {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Check Out"}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

@@ -5,15 +5,38 @@ import { getAttendanceSessions, AttendanceSession } from "@/api/attendance";
 import { Loader2, Search, Filter } from "lucide-react";
 import clsx from "clsx";
 
-export const SessionsView = ({ refreshKey }: { refreshKey: number }) => {
+export const SessionsView = ({ 
+  refreshKey, 
+  dateFilter, 
+  orgFilter, 
+  deptFilter 
+}: { 
+  refreshKey: number,
+  dateFilter?: string,
+  orgFilter?: string,
+  deptFilter?: string
+}) => {
   const [data, setData] = useState<AttendanceSession[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  
+  const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search), 300);
+    return () => clearTimeout(timer);
+  }, [search]);
 
   useEffect(() => {
     let mounted = true;
     setLoading(true);
-    getAttendanceSessions()
+    getAttendanceSessions({
+      date: dateFilter,
+      organization_id: orgFilter,
+      department_id: deptFilter,
+      employee_id: debouncedSearch // Mocking employee_id as a search query for this frontend demo
+    })
       .then((res: any) => {
         if (!mounted) return;
         setData(res?.items || (Array.isArray(res) ? res : []));
@@ -26,7 +49,7 @@ export const SessionsView = ({ refreshKey }: { refreshKey: number }) => {
       });
 
     return () => { mounted = false; };
-  }, [refreshKey]);
+  }, [refreshKey, dateFilter, orgFilter, deptFilter, debouncedSearch]);
 
   if (loading) {
     return (
@@ -54,6 +77,8 @@ export const SessionsView = ({ refreshKey }: { refreshKey: number }) => {
           <Search className="w-4 h-4 text-[var(--color-muted)] absolute left-4 top-1/2 -translate-y-1/2" />
           <input 
             type="text" 
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             placeholder="Search employee or session ID..." 
             className="w-full pl-11 pr-4 py-2.5 text-[14px] bg-white/60 border border-[var(--color-border)] rounded-full focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all placeholder:text-[var(--color-muted)] text-[var(--color-deep-navy)]"
           />

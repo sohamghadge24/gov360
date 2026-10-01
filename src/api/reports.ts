@@ -1,4 +1,4 @@
-import { fetchApi } from './apiClient';
+import { fetchApi } from '@/lib/api/client';
 
 export interface DailyAttendanceReport {
   id: string;

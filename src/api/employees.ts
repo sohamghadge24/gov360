@@ -80,11 +80,17 @@ export const getEmployees = async (
   page = 1,
   size = 25,
   category = 'all',
-  search?: string
+  search?: string,
+  department?: string,
+  unit?: string,
+  status?: string
 ): Promise<PaginatedResponse<Employee>> => {
   const query = new URLSearchParams({ page: page.toString(), size: size.toString() });
   if (category && category !== 'all') query.append('category', category);
   if (search) query.append('search', search);
+  if (department) query.append('department', department);
+  if (unit) query.append('unit', unit);
+  if (status) query.append('status', status);
   return fetchApi<PaginatedResponse<Employee>>(`/api/v1/employees?${query.toString()}`);
 };
 

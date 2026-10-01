@@ -4,25 +4,27 @@ import { useState } from "react";
 import { Bell, HelpCircle, ChevronRight, ChevronDown, User, Shield, Settings, LogOut } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/lib/context/AuthContext";
+import Link from "next/link";
 import { NotificationPopover } from "@/components/notifications/NotificationPopover";
 import { useToast } from "@/components/ui/ToastProvider";
 
 const getBreadcrumb = (pathname: string) => {
   if (pathname === "/") return { category: "Operations", page: "Dashboard" };
-  if (pathname === "/live" || pathname === "/control-room") return { category: "Operations", page: "Live Control Room" };
+  if (pathname === "/live-control-room") return { category: "Operations", page: "Live Control Room" };
   if (pathname === "/attendance") return { category: "Workforce", page: "Attendance" };
   if (pathname === "/employees") return { category: "Workforce", page: "Employees" };
-  if (pathname === "/roster") return { category: "Duty Operations", page: "Roster & Duty" };
+  if (pathname === "/roster-duty") return { category: "Duty Operations", page: "Roster & Duty" };
   if (pathname === "/verification") return { category: "Duty Operations", page: "Verification" };
   if (pathname === "/approvals") return { category: "Workflow", page: "Approvals" };
   if (pathname === "/reports") return { category: "Insights", page: "Reports & Analytics" };
-  if (pathname?.startsWith("/admin/organization")) return { category: "Administration", page: "Organization" };
+  if (pathname?.startsWith("/organization")) return { category: "Administration", page: "Organization" };
   if (pathname?.startsWith("/admin/locations")) return { category: "Administration", page: "Locations & Geofences" };
   if (pathname?.startsWith("/admin/roles")) return { category: "Administration", page: "Roles & Permissions" };
   if (pathname?.startsWith("/admin/notifications")) return { category: "Administration", page: "Notifications" };
   if (pathname?.startsWith("/admin/integrations")) return { category: "Administration", page: "Integrations" };
   if (pathname?.startsWith("/admin/audit")) return { category: "Administration", page: "Audit Log" };
   if (pathname?.startsWith("/admin/retention")) return { category: "Administration", page: "Retention / Governance" };
+  if (pathname?.startsWith("/settings")) return { category: "Administration", page: "Settings & Preferences" };
   return { category: "GovTrack360", page: "Admin" };
 };
 
@@ -105,15 +107,15 @@ export default function Header() {
                   <div className="text-[11px] text-gray-400 truncate font-mono">{user.email}</div>
                 </div>
                 <div className="py-1">
-                  <a href="/profile" className="flex items-center gap-2 px-4 py-2 text-[13px] font-medium text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors">
+                  <Link href="/profile" className="flex items-center gap-2 px-4 py-2 text-[13px] font-medium text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors">
                     <User className="w-4 h-4 text-gray-400" /> My Profile
-                  </a>
-                  <a href="/profile/security" className="flex items-center gap-2 px-4 py-2 text-[13px] font-medium text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors">
+                  </Link>
+                  <Link href="/settings" className="flex items-center gap-2 px-4 py-2 text-[13px] font-medium text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors">
                     <Shield className="w-4 h-4 text-gray-400" /> Security & Sessions
-                  </a>
-                  <a href="/profile/settings" className="flex items-center gap-2 px-4 py-2 text-[13px] font-medium text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors">
+                  </Link>
+                  <Link href="/settings" className="flex items-center gap-2 px-4 py-2 text-[13px] font-medium text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors">
                     <Settings className="w-4 h-4 text-gray-400" /> Account Settings
-                  </a>
+                  </Link>
                 </div>
                 <div className="border-t border-gray-100 py-1">
                   <button onClick={() => setShowLogoutModal(true)} className="w-full flex items-center gap-2 px-4 py-2 text-[13px] font-medium text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors text-left">
